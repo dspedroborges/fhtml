@@ -46,12 +46,6 @@ click("alert('hi')")  // { onclick: "alert('hi')" }
 // Intersection Observer - adds class when element enters viewport
 observe(".fade-in", "visible", { once: true })
 
-// HTMX attributes
-get("/api/users")
-post("/api/users")
-put("/api/users")
-delete("/api/users")
-
 // Fetch data from APIs with auto-refresh polling
 fetch("https://api.example.com/users", ".user-list", template, { 
   refetchInterval: 5000  // poll every 5 seconds
