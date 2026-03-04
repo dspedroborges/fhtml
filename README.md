@@ -59,12 +59,17 @@ fetch("https://api.example.com/users", ".user-list", template, {
 
 // Form actions with swap support
 action("#my-form", {
+  on: "submit",               // event to listen to (default: "submit")
   url: "/api/users/:id",     // :id gets replaced with form value
   method: "POST",
   type: "param",             // "json" (default) or "param" - removes replaced keys from body
   swap: ".result-container", // where to display response
-  loading: "Saving...",
+  loading: {                 // loading state configuration
+    element: ".result-container",
+    html: "Saving..."
+  },
   onSuccess: "e.target.reset()",
+  onError: "Something went wrong.",
   template: div("Created: {name}")
 })
 ```

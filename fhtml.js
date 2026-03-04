@@ -119,47 +119,47 @@ const parse = (tpl, item) => {
 };
 
 globalThis.action = (selector, {
+  on = "submit",
   url,
   method = "POST",
   type = "json",
-  loading = "Sending...",
+  loading = { element: "", html: "Sending..." },
   onSuccess = "",
   onError = "Action failed.",
   template = "",
   swap = ""
-} = {}) => script(
-`
+} = {}) => `
   (() => {
-    const form = document.querySelector("${selector}");
-    if (!form) return;
+    const el = document.querySelector("${selector}");
+    if (!el) return;
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
+    el.addEventListener("${on}", async (e) => {
+      if ("${on}" === "submit") e.preventDefault();
       
       const swapSelector = "${swap}";
       const target = swapSelector 
         ? document.querySelector(swapSelector) 
-        : (form.querySelector("[data-result]") || form.querySelector(".result"));
+        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
 
-      if (target) {
-        target.innerHTML = \`${loading}\`;
-      } else {
-        let status = form.querySelector(".form-status");
-        if (!status) {
-          status = document.createElement("div");
-          status.className = "form-status";
-          form.appendChild(status);
-        }
-        status.innerHTML = \`${loading}\`;
+      const loaderTarget = "${loading.element}" 
+        ? document.querySelector("${loading.element}") 
+        : target;
+
+      const originalLoaderHTML = loaderTarget ? loaderTarget.innerHTML : "";
+      
+      if (loaderTarget) {
+        loaderTarget.innerHTML = \`${loading.html}\`;
       }
 
       try {
-        const formData = new FormData(form);
         const data = {};
-        formData.forEach((value, key) => { data[key] = value; });
+        if (el.tagName === "FORM") {
+          new FormData(el).forEach((v, k) => { data[k] = v; });
+        } else if (el.name || el.value !== undefined) {
+          data[el.name || "value"] = el.value;
+        }
         
         let finalUrl = "${url}";
-        
         Object.keys(data).forEach(key => {
           const regex = new RegExp(":" + key, "g");
           if (regex.test(finalUrl)) {
@@ -168,7 +168,7 @@ globalThis.action = (selector, {
           }
         });
 
-        let options = { 
+        const options = { 
           method: "${method.toUpperCase()}", 
           headers: { "Content-Type": "application/json" } 
         };
@@ -190,25 +190,28 @@ globalThis.action = (selector, {
           }).join('');
         };
 
+        if ("${loading.element}" && loaderTarget) {
+            loaderTarget.innerHTML = ""; 
+        }
+
         if (target) {
           target.innerHTML = \`${template}\` ? parse(\`${template}\`, resultData) : "Success!";
-        } else {
-          alert("Success!");
         }
 
         ${onSuccess}
-      } catch (e) {
-        console.error("FormAction Error:", e.message);
+      } catch (err) {
+        console.error("Action Error:", err.message);
+        if (loaderTarget) loaderTarget.innerHTML = originalLoaderHTML;
+        
         if (target) {
-          target.innerHTML = \`<div style="color:red">\${e.message}</div>\`;
+          target.innerHTML = \`<div style="color:red">\${err.message}</div>\`;
         } else {
           alert(\`${onError}\`);
         }
       }
-    };
+    });
   })();
-`
-);
+`;
 
 // COMPONENTS 
 import * as Brutalist from "./brutalist";

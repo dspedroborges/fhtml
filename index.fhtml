@@ -1,3 +1,45 @@
+const createAction = action("#create-form", {
+  url: "https://jsonplaceholder.typicode.com/posts",
+  method: "POST",
+  swap: "#post-result",
+  loading: { element: "#post-result", html: "<span>⏳ Saving...</span>" },
+  template: div("✅ Created ID: {id}"),
+  onSuccess: "e.target.reset()"
+});
+
+const updateAction = action("#update-form", {
+  url: "https://jsonplaceholder.typicode.com/users/:id",
+  method: "PUT",
+  type: "param",
+  swap: ".update-status",
+  loading: { element: ".update-status", html: "Updating..." },
+  template: div("👤 Updated: {name}")
+});
+
+const deleteAction = action("#del-btn", {
+  on: "click",
+  url: "https://jsonplaceholder.typicode.com/posts/:id",
+  method: "DELETE",
+  type: "param",
+  swap: "#delete-log",
+  loading: { element: "#delete-log", html: "<b>Removing...</b>" },
+  template: div("🗑️ Deleted successfully!")
+});
+
+const fetchOnChange = action("#user-select", {
+  on: "change",
+  url: "https://jsonplaceholder.typicode.com/users/:id",
+  method: "GET",
+  type: "param",
+  swap: "#user-card",
+  loading: { element: "#user-card", html: "<i>Searching...</i>" },
+  template: div(
+    h4("{name}"),
+    p("Email: {email}"),
+    p("City: {address.city}")
+  )
+});
+
 html(
   head(
     title("Full API Test"),
@@ -5,8 +47,7 @@ html(
   ),
   body(
     h1("Universal API Tester"),
-    
-    // 1. POST TEST - Using explicit ID for swap
+
     section(
       h2("POST: Create Post"),
       form(id("create-form"),
@@ -14,70 +55,37 @@ html(
         textarea({ name: "body", placeholder: "Post content..." }),
         button("Create Post")
       ),
-      div(id("post-result"), "Waiting for action..."),
-      action("#create-form", {
-        url: "https://jsonplaceholder.typicode.com/posts",
-        method: "POST",
-        swap: "#post-result",
-        template: div("✅ Created ID: {id}"),
-        onSuccess: "e.target.reset()"
-      })
+      div(id("post-result"), "Waiting for action...")
     ),
 
-    // 2. PUT TEST - Using a scoped class inside the form
     section(
       h2("PUT: Update User"),
       form(id("update-form"),
-        input({ name: "id", placeholder: "User ID to update (e.g. 1)" }),
+        input({ name: "id", placeholder: "User ID to update" }),
         input({ name: "name", placeholder: "New Name" }),
         button("Update Name"),
         div(cls("update-status"), "Waiting for action...")
-      ),
-      action("#update-form", {
-        url: "https://jsonplaceholder.typicode.com/users/:id",
-        method: "PUT",
-        type: "param",
-        swap: ".update-status",
-        template: div("👤 Updated: {name}")
-      })
+      )
     ),
 
-    // 3. DELETE TEST - Targeting a completely different container
     section(
       h2("DELETE: Remove Post"),
-      form(id("delete-form"),
-        input({ name: "id", placeholder: "Post ID to delete" }),
-        button({ style: "background: red" }, "Delete Post")
+      div(
+        input({ id: "del-id", name: "id", placeholder: "Post ID" }),
+        button(id("del-btn"), { style: "background: red" }, "Delete Now")
       ),
       div(id("delete-log"), "No deletions yet.")
     ),
-    action("#delete-form", {
-      url: "https://jsonplaceholder.typicode.com/posts/:id",
-      method: "DELETE",
-      type: "param",
-      swap: "#delete-log",
-      loading: "Deleting...",
-      template: div("🗑️ Deleted successfully!")
-    }),
 
-    // 4. GET TEST (Search) - Using the fallback logic (no swap provided)
     section(
-      h2("GET: Fetch User by ID"),
-      form(id("get-form"),
-        input({ name: "id", placeholder: "User ID" }),
-        button({ style: "background: #28a745" }, "Fetch Data"),
-        div(cls("result")) // Fallback will find .result
+      h2("GET: Fetch User on Change"),
+      div(
+        label("Select User ID: "),
+        input({ id: "user-select", name: "id", type: "number", value: "1" })
       ),
-      action("#get-form", {
-        url: "https://jsonplaceholder.typicode.com/users/:id",
-        method: "GET",
-        type: "param",
-        template: div(
-          h4("{name}"),
-          p("Email: {email}"),
-          p("Company: {company.name}")
-        )
-      })
-    )
+      div(id("user-card"), "Change the number to fetch...")
+    ),
+
+    script(createAction + updateAction + deleteAction + fetchOnChange)
   )
 );
