@@ -125,7 +125,8 @@ globalThis.action = (selector, {
   loading = "Sending...",
   onSuccess = "",
   onError = "Action failed.",
-  template = "" 
+  template = "",
+  swap = ""
 } = {}) => script(
 `
   (() => {
@@ -134,11 +135,15 @@ globalThis.action = (selector, {
 
     form.onsubmit = async (e) => {
       e.preventDefault();
-      const target = form.querySelector("[data-result]") || form.querySelector(".result");
+      
+      const swapSelector = "${swap}";
+      const target = swapSelector 
+        ? document.querySelector(swapSelector) 
+        : (form.querySelector("[data-result]") || form.querySelector(".result"));
+
       if (target) {
         target.innerHTML = \`${loading}\`;
       } else {
-        // Fallback: Create a temporary status message if no target exists
         let status = form.querySelector(".form-status");
         if (!status) {
           status = document.createElement("div");
@@ -155,7 +160,6 @@ globalThis.action = (selector, {
         
         let finalUrl = "${url}";
         
-        // Improved replacement logic
         Object.keys(data).forEach(key => {
           const regex = new RegExp(":" + key, "g");
           if (regex.test(finalUrl)) {
@@ -196,8 +200,7 @@ globalThis.action = (selector, {
       } catch (e) {
         console.error("FormAction Error:", e.message);
         if (target) {
-          // Restore the original UI on error so the form doesn't vanish
-          target.innerHTML = \`<div style="color:red">\${e.message}</div>\` + (originalHTML || "");
+          target.innerHTML = \`<div style="color:red">\${e.message}</div>\`;
         } else {
           alert(\`${onError}\`);
         }

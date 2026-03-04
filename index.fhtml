@@ -1,318 +1,72 @@
-
-
 html(
   head(
     title("Full API Test"),
     script({ src: "https://cdn.tailwindcss.com" })
   ),
   body(
-
-    Navbar({
-      brand: "Forma",
-      cta: "Start Free",
-      links: [
-        { label: "Product", href: "#", children: [
-            { label: "Overview",  href: "#" },
-            { label: "Features",  href: "#" },
-            { label: "Changelog", href: "#" },
-        ]},
-        { label: "Pricing", href: "#" },
-        { label: "Docs",    href: "#" },
-      ]
-    }),
-
-    Hero({
-      badge: "Now in public beta",
-      eyebrow: "Ship faster",
-      headline: "Design systems that scale.",
-      sub: "A complete component library built for teams who care about craft.",
-      primaryCta: "Start for free",
-      secondaryCta: "See the docs",
-    }),
-
-    LogosBar({
-      label: "Used by teams at",
-      logos: [
-        { name: "Stripe", icon: "◈" }, { name: "Linear", icon: "◆" },
-        { name: "Vercel", icon: "▲" }, { name: "Figma",  icon: "✦" },
-        { name: "Notion", icon: "□" },
-      ]
-    }),
-
-    Features({
-      eyebrow: "Features",
-      headline: "Everything you need, nothing you don't.",
-      items: [
-        { icon: "⚡", title: "Blazing fast",    description: "Optimised for performance from the ground up."   },
-        { icon: "🎨", title: "Fully themeable", description: "Dark mode, custom tokens, total control."         },
-        { icon: "🧩", title: "Composable",      description: "Every component follows the same simple DSL."     },
-        { icon: "♿", title: "Accessible",      description: "WCAG 2.1 AA out of the box."                     },
-        { icon: "📱", title: "Responsive",      description: "Mobile-first with sensible breakpoints."          },
-        { icon: "🔒", title: "Type-safe",       description: "Full TypeScript support with tight prop types."   },
-      ]
-    }),
-
-    StatsBand({
-      items: [
-        { value: "99.9%", label: "Uptime SLA"    },
-        { value: "4.8★",  label: "Avg rating"    },
-        { value: "50K+",  label: "Developers"    },
-        { value: "<2ms",  label: "Response time" },
-      ]
-    }),
-
-    Testimonials({
-      items: [
-        { quote: "Shipped our design system in a week.",             name: "Alice Zhao",  title: "CTO, Runway"       },
-        { quote: "The dark mode just works. No hacks, no overrides.", name: "Ben Okafor",  title: "Lead Engineer, Luma" },
-        { quote: "Finally a library that doesn't look generic.",      name: "Cara Lin",    title: "Design Lead, Arc"  },
-      ]
-    }),
-
-    Pricing({
-      plans: [
-        { name: "Starter", price: "Free",  period: "forever", cta: "Get started",   features: ["Up to 3 projects", "Core components", "Community support"] },
-        { name: "Pro",     price: "$19",   period: "/mo",      cta: "Start trial",   features: ["Unlimited projects", "All components", "Priority support", "Figma kit"], highlighted: true },
-        { name: "Enterprise", price: "Custom", period: "",     cta: "Contact sales", features: ["SSO & SAML", "SLA guarantee", "Dedicated support", "Custom contracts"] },
-      ]
-    }),
-
-    FAQ({
-      items: [
-        { question: "Is there a free plan?",           answer: "Yes — our Starter tier is free forever with no credit card required." },
-        { question: "Can I self-host?",                answer: "Enterprise customers can request a self-hosted deployment option."     },
-        { question: "What frameworks are supported?",  answer: "React, Vue, and vanilla HTML/JS are all first-class targets."          },
-      ]
-    }),
-
-    CTABand({
-      headline: "Start building today.",
-      sub: "No credit card. No lock-in. Just great components.",
-      primaryCta: "Get started free",
-      secondaryCta: "Talk to us",
-    }),
-
-    Footer({
-      brand: "Forma",
-      columns: [
-        { title: "Product",    links: [{ label: "Features" }, { label: "Pricing" },  { label: "Changelog" }] },
-        { title: "Developers", links: [{ label: "Docs" },     { label: "GitHub" },   { label: "Status" }]    },
-        { title: "Company",    links: [{ label: "About" },    { label: "Blog" },     { label: "Careers" }]   },
-      ]
-    }),
-
- div(cls("min-h-screen bg-white dark:bg-black flex"),
-
-    Sidebar({
-      items: [
-        { label: "Overview", icon: "▦" },
-        { label: "Users", icon: "👤" },
-        { label: "Revenue", icon: "$" },
-        { label: "Settings", icon: "⚙" },
-      ]
-    }),
-
-    div(cls("flex-1 flex flex-col"),
-
-      // Top bar
-      div(
-        cls("h-14 border-b-2 border-black dark:border-white px-6 flex items-center justify-between"),
-
-        Breadcrumb({
-          items: [
-            { label: "Dashboard" },
-            { label: "Overview" }
-          ]
-        }),
-
-        div(
-          cls("flex items-center gap-4"),
-          DropdownMenu({
-            trigger: "Create",
-            items: [
-              { label: "New user" },
-              { label: "New invoice" },
-              { divider: true },
-              { label: "Export data" }
-            ]
-          }),
-          Avatar({ name: "Pedro Duarte", status: "online" })
-        )
-      ),
-
-      // Content
-      div(
-        cls("p-8 flex flex-col gap-10"),
-
-        // Stats row
-        div(
-          cls("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"),
-          StatCard({ label: "Revenue", value: "$24,900", delta: "+12%" }),
-          StatCard({ label: "Users", value: "1,204", delta: "+5%" }),
-          StatCard({ label: "Orders", value: "320", delta: "-3%" }),
-          StatCard({ label: "Conversion", value: "3.2%", delta: "+0.4%" }),
-        ),
-
-        // Main grid
-        div(
-          cls("grid grid-cols-1 lg:grid-cols-3 gap-8"),
-
-          // Table area
-          div(
-            cls("lg:col-span-2 flex flex-col gap-6"),
-
-            Card({
-              title: "Recent Users",
-              body: "Latest registered accounts.",
-              footer: null
-            }),
-
-            Table({
-              columns: [
-                { key: "name", label: "Name" },
-                { key: "email", label: "Email" },
-                { key: "role", label: "Role" },
-              ],
-              rows: [
-                { name: "Ana Silva", email: "ana@mail.com", role: "Admin" },
-                { name: "Lucas Costa", email: "lucas@mail.com", role: "Editor" },
-                { name: "Marina Souza", email: "marina@mail.com", role: "Viewer" },
-              ]
-            })
-          ),
-
-          // Side widgets
-          div(
-            cls("flex flex-col gap-6"),
-
-            Card({
-              title: "Storage Usage",
-              body: null,
-              footer: ProgressBar({ value: 72, label: "Used" })
-            }),
-
-            Card({
-              title: "System Status",
-              body: "All services operational.",
-              footer: Badge({ label: "Healthy", variant: "success" })
-            }),
-
-            Card({
-              title: "Quick Actions",
-              footer: div(
-                cls("flex flex-col gap-3"),
-                Button({ label: "Create User", variant: "primary" }),
-                Button({ label: "Generate Report", variant: "secondary" })
-              )
-            })
-          )
-        )
-      )
-    )
-  ),
-
-form(
-    cls("max-w-xl mx-auto p-8 rounded-2xl border bg-white border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800 flex flex-col gap-6"),
-
-    div(
-      cls("flex flex-col gap-1"),
-      h2(cls("text-2xl font-black tracking-tight text-zinc-950 dark:text-white"), "Create account"),
-      p(cls("text-sm text-zinc-500 dark:text-zinc-400"), "Fill the information below to get started.")
-    ),
-
-    InputField({
-      label: "Full name",
-      placeholder: "John Doe",
-    }),
-
-    InputField({
-      label: "Email",
-      type: "email",
-      placeholder: "john@company.com",
-    }),
-
-    InputField({
-      label: "Password",
-      type: "password",
-      placeholder: "••••••••",
-      hint: "Minimum 8 characters"
-    }),
-
-    div(
-      cls("flex items-center justify-between"),
-      Toggle({ label: "Accept terms", checked: false }),
-      a(
-        cls("text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"),
-        "Read terms"
-      )
-    ),
-
-    div(
-      cls("flex flex-col gap-3 pt-2"),
-      Button({ label: "Create account", variant: "primary", size: "md" }),
-      Button({ label: "Cancel", variant: "ghost", size: "md" })
-    )
-  ),
-
     h1("Universal API Tester"),
-    // 1. POST TEST
+    
+    // 1. POST TEST - Using explicit ID for swap
     section(
       h2("POST: Create Post"),
       form(id("create-form"),
         input({ name: "title", placeholder: "Post Title" }),
         textarea({ name: "body", placeholder: "Post content..." }),
-        button("Create Post"),
-        div(cls("result"), "Waiting for action...")
+        button("Create Post")
       ),
+      div(id("post-result"), "Waiting for action..."),
       action("#create-form", {
         url: "https://jsonplaceholder.typicode.com/posts",
         method: "POST",
+        swap: "#post-result",
         template: div("✅ Created ID: {id}"),
         onSuccess: "e.target.reset()"
       })
     ),
 
-    // 2. PUT TEST
+    // 2. PUT TEST - Using a scoped class inside the form
     section(
       h2("PUT: Update User"),
       form(id("update-form"),
         input({ name: "id", placeholder: "User ID to update (e.g. 1)" }),
         input({ name: "name", placeholder: "New Name" }),
         button("Update Name"),
-        div(cls("result"), "Waiting for action...")
+        div(cls("update-status"), "Waiting for action...")
       ),
       action("#update-form", {
         url: "https://jsonplaceholder.typicode.com/users/:id",
         method: "PUT",
         type: "param",
+        swap: ".update-status",
         template: div("👤 Updated: {name}")
       })
     ),
 
-    // 3. DELETE TEST
+    // 3. DELETE TEST - Targeting a completely different container
     section(
       h2("DELETE: Remove Post"),
       form(id("delete-form"),
         input({ name: "id", placeholder: "Post ID to delete" }),
-        button({ style: "background: red" }, "Delete Post"),
-        div(cls("result"))
+        button({ style: "background: red" }, "Delete Post")
       ),
-      action("#delete-form", {
-        url: "https://jsonplaceholder.typicode.com/posts/:id",
-        method: "DELETE",
-        type: "param",
-        loading: "Deleting...",
-        template: div("🗑️ Deleted successfully!")
-      })
+      div(id("delete-log"), "No deletions yet.")
     ),
+    action("#delete-form", {
+      url: "https://jsonplaceholder.typicode.com/posts/:id",
+      method: "DELETE",
+      type: "param",
+      swap: "#delete-log",
+      loading: "Deleting...",
+      template: div("🗑️ Deleted successfully!")
+    }),
 
-    // 4. GET TEST (Search)
+    // 4. GET TEST (Search) - Using the fallback logic (no swap provided)
     section(
       h2("GET: Fetch User by ID"),
       form(id("get-form"),
         input({ name: "id", placeholder: "User ID" }),
         button({ style: "background: #28a745" }, "Fetch Data"),
-        div(cls("result"))
+        div(cls("result")) // Fallback will find .result
       ),
       action("#get-form", {
         url: "https://jsonplaceholder.typicode.com/users/:id",

@@ -40,6 +40,11 @@ This watches all `.fhtml` files and compiles them to HTML on change.
 id("my-id")           // { id: "my-id" }
 cls("btn", "large")  // { class: "btn large" }
 css({ color: "red" }) // { style: "color:red" }
+name("username")      // { name: "username" }
+click("alert('hi')")  // { onclick: "alert('hi')" }
+
+// Intersection Observer - adds class when element enters viewport
+observe(".fade-in", "visible", { once: true })
 
 // HTMX attributes
 get("/api/users")
@@ -47,23 +52,30 @@ post("/api/users")
 put("/api/users")
 delete("/api/users")
 
-// Fetch data from APIs
-fetch("https://api.example.com/users", ".user-list", template)
+// Fetch data from APIs with auto-refresh polling
+fetch("https://api.example.com/users", ".user-list", template, { 
+  refetchInterval: 5000  // poll every 5 seconds
+})
 
-// Form actions
+// Form actions with swap support
 action("#my-form", {
-  url: "/api/submit",
+  url: "/api/users/:id",     // :id gets replaced with form value
   method: "POST",
+  type: "param",             // "json" (default) or "param" - removes replaced keys from body
+  swap: ".result-container", // where to display response
+  loading: "Saving...",
+  onSuccess: "e.target.reset()",
   template: div("Created: {name}")
 })
 ```
 
 ## Components
 
-Two template libraries are included:
+Three template libraries are included:
 
 - **default.js** - Modern, rounded aesthetic with Tailwind
 - **brutalist.js** - Hard edges, borders, stark contrast
+- **material.js** - Material Design inspired components
 
 Import and use them in your `.fhtml` files:
 
@@ -86,6 +98,7 @@ fhtml.js              # Build script (runs with Bun)
 templates/
   default.js          # Default component library
   brutalist.js        # Brutalist component library
+  material.js         # Material Design component library
 *.fhtml               # Your source files
 *.html                # Compiled output
 ```
