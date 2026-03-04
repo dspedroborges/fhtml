@@ -47,6 +47,8 @@ tags.forEach(tag => {
 
 // GENERAL ATTR HELPERS
 globalThis.id = (val) => ({ id: val });
+globalThis.name = (val) => ({ name: val });
+globalThis.click = (val) => ({ onclick: val });
 globalThis.cls = (...classes) => ({ class: classes.filter(Boolean).join(" ") });
 globalThis.css = (obj) => ({ style: obj });
 globalThis.observe = (selector, className, { once = false } = {}) => `
@@ -66,22 +68,6 @@ globalThis.observe = (selector, className, { once = false } = {}) => `
     elements.forEach(el => observer.observe(el));
   })();
 `;
-
-// HTMX HELPERS
-const htmxAttributes = [
-  "get", "post", "put", "delete", "patch", 
-  "target", "swap", "trigger", "select", 
-  "push-url", "vals", "confirm", "on",
-  "boost", "headers", "params", "encoding", 
-  "ext", "indicator", "history", "history-elt", 
-  "include", "request", "sync", "validate",
-  "disinherit", "vars", "ws", "sse"
-];
-
-htmxAttributes.forEach(attr => {
-  const methodName = attr.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-  globalThis[methodName] = (val) => ({ [`hx-${attr}`]: val });
-});
 
 // FETCH AND FORM ACTIONS
 globalThis.fetch = (url, selector, template, { 
@@ -222,20 +208,9 @@ globalThis.action = (selector, {
 );
 
 // COMPONENTS 
-import {
-  // Landing
-  Navbar, Hero, Features, FeaturesAlternate,
-  LogosBar, Testimonials, Pricing, FAQ,
-  StatsBand, CTABand, Footer,
-
-  // App shell
-  Sidebar,
-
-  // UI
-  Button, Card, Badge, Avatar, Alert,
-  InputField, Table, Tabs, Modal, StatCard,
-  DropdownMenu, Breadcrumb, Toggle, Skeleton, ProgressBar,
-} from "./brutalist";
+import * as Brutalist from "./brutalist";
+import * as Material from "./material";
+import * as Default from "./default";
 
 const build = async () => {
   const glob = new Glob("**/*.fhtml");
