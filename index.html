@@ -1,310 +1,320 @@
 <!DOCTYPE html>
-<html><head><title>Full API Test</title><script src="https://cdn.tailwindcss.com"></script></head><body><nav class="w-full border-b-2 border-black dark:border-white bg-white dark:bg-black sticky top-0 z-50 px-6 lg:px-10"><div class="max-w-7xl mx-auto flex items-center justify-between h-14"><a class="text-sm font-black uppercase tracking-[0.15em] shrink-0 text-black dark:text-white">Forma</a><ul class="hidden md:flex items-stretch h-14"><li class="relative group flex items-stretch"><a class="flex items-center gap-1 px-5 text-xs font-bold uppercase tracking-widest transition-colors border-r border-black/10 dark:border-white/10 text-black/50 hover:text-black hover:bg-black hover:text-white dark:text-white/50 dark:hover:text-black dark:hover:bg-white">Product<span class="ml-1 text-[10px]">▾</span></a><div class="absolute top-full left-0 min-w-52 z-50 border-2 border-black dark:border-white bg-white dark:bg-black opacity-0 pointer-events-none -translate-y-1 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-150"><ul class=""><li><a class="flex items-center px-5 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-b border-black/10 last:border-0 dark:border-white/10 text-black/60 hover:text-white hover:bg-black dark:text-white/60 dark:hover:text-black dark:hover:bg-white">Overview</a></li><li><a class="flex items-center px-5 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-b border-black/10 last:border-0 dark:border-white/10 text-black/60 hover:text-white hover:bg-black dark:text-white/60 dark:hover:text-black dark:hover:bg-white">Features</a></li><li><a class="flex items-center px-5 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-b border-black/10 last:border-0 dark:border-white/10 text-black/60 hover:text-white hover:bg-black dark:text-white/60 dark:hover:text-black dark:hover:bg-white">Changelog</a></li></ul></div></li><li class="relative group flex items-stretch"><a class="flex items-center gap-1 px-5 text-xs font-bold uppercase tracking-widest transition-colors border-r border-black/10 dark:border-white/10 text-black/50 hover:text-black hover:bg-black hover:text-white dark:text-white/50 dark:hover:text-black dark:hover:bg-white">Pricing</a></li><li class="relative group flex items-stretch"><a class="flex items-center gap-1 px-5 text-xs font-bold uppercase tracking-widest transition-colors border-r border-black/10 dark:border-white/10 text-black/50 hover:text-black hover:bg-black hover:text-white dark:text-white/50 dark:hover:text-black dark:hover:bg-white">Docs</a></li></ul><div class="flex items-center gap-0"><button class="hidden md:inline-flex items-center px-6 py-2 text-xs font-black uppercase tracking-widest transition-colors border-l-2 border-black dark:border-white h-14 bg-black text-white hover:bg-white hover:text-black dark:bg-white dark:text-black dark:hover:bg-black dark:hover:text-white">Start Free</button><button class="md:hidden flex flex-col gap-1.5 p-3"><span class="block w-5 h-0.5 bg-black dark:bg-white"></span><span class="block w-5 h-0.5 bg-black dark:bg-white"></span><span class="block w-5 h-0.5 bg-black dark:bg-white"></span></button></div></div></nav><section class="relative overflow-hidden py-28 md:py-40 px-6 bg-white dark:bg-black border-b-2 border-black dark:border-white"><div class="absolute top-0 right-0 w-1/3 h-full opacity-[0.03] dark:opacity-[0.06] pointer-events-none bg-[repeating-linear-gradient(-45deg,black_0px,black_1px,transparent_1px,transparent_12px)] dark:bg-[repeating-linear-gradient(-45deg,white_0px,white_1px,transparent_1px,transparent_12px)]"></div><div class="relative max-w-5xl mx-auto flex flex-col gap-8"><div class="flex flex-col gap-4"><div class="flex items-center gap-0 w-fit border-2 border-black dark:border-white"><span class="px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] bg-black text-white dark:bg-white dark:text-black">New</span><span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black dark:text-white">Now in public beta</span></div><p class="text-xs font-black uppercase tracking-[0.3em] text-black/30 dark:text-white/30">Ship faster</p><h1 class="text-6xl md:text-8xl font-black uppercase leading-none tracking-tighter text-black dark:text-white">Design systems that scale.</h1></div><div class="flex flex-col md:flex-row md:items-end justify-between gap-8 border-t-2 border-black dark:border-white pt-8"><p class="text-base leading-relaxed max-w-md text-black/60 dark:text-white/60">A complete component library built for teams who care about craft.</p><div class="flex items-center gap-0 shrink-0"><button class="inline-flex items-center gap-3 px-8 py-4 text-xs font-black uppercase tracking-widest transition-colors bg-black text-white hover:bg-white hover:text-black border-2 border-black dark:bg-white dark:text-black dark:hover:bg-black dark:hover:text-white dark:border-white">Start for free<span class="text-base">→</span></button><button class="inline-flex items-center gap-3 px-8 py-4 text-xs font-black uppercase tracking-widest transition-colors bg-white text-black hover:bg-black hover:text-white border-2 border-l-0 border-black dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black dark:border-white">See the docs</button></div></div></div></section><section class="py-12 px-6 border-b-2 border-black dark:border-white bg-black dark:bg-white"><div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12"><p class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 dark:text-black/40 shrink-0">Used by teams at</p><div class="w-px h-8 bg-white/20 dark:bg-black/20 hidden md:block shrink-0"></div><div class="flex flex-wrap items-center justify-center md:justify-start gap-8"><div class="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/30 hover:text-white dark:text-black/30 dark:hover:text-black transition-colors"><span class="text-xl font-mono">◈</span><span class="">Stripe</span></div><div class="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/30 hover:text-white dark:text-black/30 dark:hover:text-black transition-colors"><span class="text-xl font-mono">◆</span><span class="">Linear</span></div><div class="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/30 hover:text-white dark:text-black/30 dark:hover:text-black transition-colors"><span class="text-xl font-mono">▲</span><span class="">Vercel</span></div><div class="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/30 hover:text-white dark:text-black/30 dark:hover:text-black transition-colors"><span class="text-xl font-mono">✦</span><span class="">Figma</span></div><div class="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/30 hover:text-white dark:text-black/30 dark:hover:text-black transition-colors"><span class="text-xl font-mono">□</span><span class="">Notion</span></div></div></div></section><section class="py-24 md:py-32 px-6 bg-white dark:bg-black border-b-2 border-black dark:border-white"><div class="max-w-7xl mx-auto"><div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 pb-8 border-b-2 border-black dark:border-white"><div class="flex flex-col gap-3"><p class="text-[10px] font-black uppercase tracking-[0.3em] text-black/30 dark:text-white/30">Features</p><h2 class="text-4xl md:text-6xl font-black uppercase leading-none tracking-tighter text-black dark:text-white">Everything you need, nothing you don't.</h2></div></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-l-2 border-t-2 border-black dark:border-white"><div class="flex flex-col gap-5 p-8 border-r-2 border-b-2 border-black dark:border-white group transition-colors hover:bg-black dark:hover:bg-white"><span class="text-3xl font-mono w-12 h-12 flex items-center justify-center border-2 border-black dark:border-white transition-colors group-hover:border-white dark:group-hover:border-black group-hover:text-white dark:group-hover:text-black">⚡</span><div class="flex flex-col gap-2"><h3 class="text-sm font-black uppercase tracking-widest transition-colors text-black dark:text-white group-hover:text-white dark:group-hover:text-black">Blazing fast</h3><p class="text-xs leading-relaxed transition-colors text-black/50 dark:text-white/50 group-hover:text-white/70 dark:group-hover:text-black/70">Optimised for performance from the ground up.</p></div></div><div class="flex flex-col gap-5 p-8 border-r-2 border-b-2 border-black dark:border-white group transition-colors hover:bg-black dark:hover:bg-white"><span class="text-3xl font-mono w-12 h-12 flex items-center justify-center border-2 border-black dark:border-white transition-colors group-hover:border-white dark:group-hover:border-black group-hover:text-white dark:group-hover:text-black">🎨</span><div class="flex flex-col gap-2"><h3 class="text-sm font-black uppercase tracking-widest transition-colors text-black dark:text-white group-hover:text-white dark:group-hover:text-black">Fully themeable</h3><p class="text-xs leading-relaxed transition-colors text-black/50 dark:text-white/50 group-hover:text-white/70 dark:group-hover:text-black/70">Dark mode, custom tokens, total control.</p></div></div><div class="flex flex-col gap-5 p-8 border-r-2 border-b-2 border-black dark:border-white group transition-colors hover:bg-black dark:hover:bg-white"><span class="text-3xl font-mono w-12 h-12 flex items-center justify-center border-2 border-black dark:border-white transition-colors group-hover:border-white dark:group-hover:border-black group-hover:text-white dark:group-hover:text-black">🧩</span><div class="flex flex-col gap-2"><h3 class="text-sm font-black uppercase tracking-widest transition-colors text-black dark:text-white group-hover:text-white dark:group-hover:text-black">Composable</h3><p class="text-xs leading-relaxed transition-colors text-black/50 dark:text-white/50 group-hover:text-white/70 dark:group-hover:text-black/70">Every component follows the same simple DSL.</p></div></div><div class="flex flex-col gap-5 p-8 border-r-2 border-b-2 border-black dark:border-white group transition-colors hover:bg-black dark:hover:bg-white"><span class="text-3xl font-mono w-12 h-12 flex items-center justify-center border-2 border-black dark:border-white transition-colors group-hover:border-white dark:group-hover:border-black group-hover:text-white dark:group-hover:text-black">♿</span><div class="flex flex-col gap-2"><h3 class="text-sm font-black uppercase tracking-widest transition-colors text-black dark:text-white group-hover:text-white dark:group-hover:text-black">Accessible</h3><p class="text-xs leading-relaxed transition-colors text-black/50 dark:text-white/50 group-hover:text-white/70 dark:group-hover:text-black/70">WCAG 2.1 AA out of the box.</p></div></div><div class="flex flex-col gap-5 p-8 border-r-2 border-b-2 border-black dark:border-white group transition-colors hover:bg-black dark:hover:bg-white"><span class="text-3xl font-mono w-12 h-12 flex items-center justify-center border-2 border-black dark:border-white transition-colors group-hover:border-white dark:group-hover:border-black group-hover:text-white dark:group-hover:text-black">📱</span><div class="flex flex-col gap-2"><h3 class="text-sm font-black uppercase tracking-widest transition-colors text-black dark:text-white group-hover:text-white dark:group-hover:text-black">Responsive</h3><p class="text-xs leading-relaxed transition-colors text-black/50 dark:text-white/50 group-hover:text-white/70 dark:group-hover:text-black/70">Mobile-first with sensible breakpoints.</p></div></div><div class="flex flex-col gap-5 p-8 border-r-2 border-b-2 border-black dark:border-white group transition-colors hover:bg-black dark:hover:bg-white"><span class="text-3xl font-mono w-12 h-12 flex items-center justify-center border-2 border-black dark:border-white transition-colors group-hover:border-white dark:group-hover:border-black group-hover:text-white dark:group-hover:text-black">🔒</span><div class="flex flex-col gap-2"><h3 class="text-sm font-black uppercase tracking-widest transition-colors text-black dark:text-white group-hover:text-white dark:group-hover:text-black">Type-safe</h3><p class="text-xs leading-relaxed transition-colors text-black/50 dark:text-white/50 group-hover:text-white/70 dark:group-hover:text-black/70">Full TypeScript support with tight prop types.</p></div></div></div></div></section><section class="py-0 border-b-2 border-black dark:border-white bg-white dark:bg-black"><div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x-2 divide-black dark:divide-white"><div class="flex flex-col gap-1 px-8 py-12"><span class="text-5xl md:text-6xl font-black tabular-nums tracking-tighter leading-none font-mono text-black dark:text-white">99.9%</span><span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30 mt-2">Uptime SLA</span></div><div class="flex flex-col gap-1 px-8 py-12"><span class="text-5xl md:text-6xl font-black tabular-nums tracking-tighter leading-none font-mono text-black dark:text-white">4.8★</span><span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30 mt-2">Avg rating</span></div><div class="flex flex-col gap-1 px-8 py-12"><span class="text-5xl md:text-6xl font-black tabular-nums tracking-tighter leading-none font-mono text-black dark:text-white">50K+</span><span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30 mt-2">Developers</span></div><div class="flex flex-col gap-1 px-8 py-12"><span class="text-5xl md:text-6xl font-black tabular-nums tracking-tighter leading-none font-mono text-black dark:text-white">&lt;2ms</span><span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30 mt-2">Response time</span></div></div></section><section class="py-24 md:py-32 px-6 bg-white dark:bg-black border-b-2 border-black dark:border-white"><div class="max-w-7xl mx-auto"><div class="mb-16 pb-8 border-b-2 border-black dark:border-white"><p class="text-[10px] font-black uppercase tracking-[0.3em] mb-3 text-black/30 dark:text-white/30">Testimonials</p><h2 class="text-4xl md:text-6xl font-black uppercase leading-none tracking-tighter text-black dark:text-white">Loved by teams</h2></div><div class="grid grid-cols-1 md:grid-cols-3 border-l-2 border-t-2 border-black dark:border-white"><div class="flex flex-col justify-between gap-8 p-8 border-r-2 border-b-2 border-black dark:border-white"><p class="text-sm leading-relaxed text-black/70 dark:text-white/70 font-mono">&quot;Shipped our design system in a week.&quot;</p><div class="flex flex-col gap-0.5 border-t-2 border-black dark:border-white pt-5"><p class="text-xs font-black uppercase tracking-widest text-black dark:text-white">Alice Zhao</p><p class="text-[10px] font-bold uppercase tracking-widest text-black/40 dark:text-white/40">CTO, Runway</p></div></div><div class="flex flex-col justify-between gap-8 p-8 border-r-2 border-b-2 border-black dark:border-white"><p class="text-sm leading-relaxed text-black/70 dark:text-white/70 font-mono">&quot;The dark mode just works. No hacks, no overrides.&quot;</p><div class="flex flex-col gap-0.5 border-t-2 border-black dark:border-white pt-5"><p class="text-xs font-black uppercase tracking-widest text-black dark:text-white">Ben Okafor</p><p class="text-[10px] font-bold uppercase tracking-widest text-black/40 dark:text-white/40">Lead Engineer, Luma</p></div></div><div class="flex flex-col justify-between gap-8 p-8 border-r-2 border-b-2 border-black dark:border-white"><p class="text-sm leading-relaxed text-black/70 dark:text-white/70 font-mono">&quot;Finally a library that doesn't look generic.&quot;</p><div class="flex flex-col gap-0.5 border-t-2 border-black dark:border-white pt-5"><p class="text-xs font-black uppercase tracking-widest text-black dark:text-white">Cara Lin</p><p class="text-[10px] font-bold uppercase tracking-widest text-black/40 dark:text-white/40">Design Lead, Arc</p></div></div></div></div></section><section class="py-24 md:py-32 px-6 bg-white dark:bg-black border-b-2 border-black dark:border-white"><div class="max-w-6xl mx-auto"><div class="mb-16 pb-8 border-b-2 border-black dark:border-white"><p class="text-[10px] font-black uppercase tracking-[0.3em] mb-3 text-black/30 dark:text-white/30">Pricing</p><h2 class="text-4xl md:text-6xl font-black uppercase leading-none tracking-tighter text-black dark:text-white">Simple, honest pricing</h2></div><div class="grid grid-cols-1 md:grid-cols-3 border-l-2 border-t-2 border-black dark:border-white"><div class="flex flex-col border-r-2 border-b-2 border-black dark:border-white relative bg-white text-black dark:bg-black dark:text-white"><div class="p-8 border-b-2 border-black dark:border-white"><p class="text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-black/30 dark:text-white/30">Starter</p><div class="flex items-end gap-2 mb-3"><span class="text-6xl font-black leading-none tracking-tighter font-mono">Free</span><span class="text-xs font-bold uppercase tracking-widest mb-1 text-black/30 dark:text-white/30">forever</span></div></div><div class="p-8 flex-1"><ul class="flex flex-col gap-3 mb-8"><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-black dark:text-white">+</span><span class="text-black/60 dark:text-white/60">Up to 3 projects</span></li><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-black dark:text-white">+</span><span class="text-black/60 dark:text-white/60">Core components</span></li><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-black dark:text-white">+</span><span class="text-black/60 dark:text-white/60">Community support</span></li></ul><button class="w-full py-3.5 text-xs font-black uppercase tracking-widest transition-colors border-2 border-black text-black hover:bg-black hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black">Get started</button></div></div><div class="flex flex-col border-r-2 border-b-2 border-black dark:border-white relative bg-black text-white dark:bg-white dark:text-black"><div class="absolute top-0 left-0 right-0 h-1 bg-white dark:bg-black"></div><div class="p-8 border-b-2 border-white/20 dark:border-black/20"><p class="text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-white/50 dark:text-black/50">Pro</p><div class="flex items-end gap-2 mb-3"><span class="text-6xl font-black leading-none tracking-tighter font-mono">$19</span><span class="text-xs font-bold uppercase tracking-widest mb-1 text-white/40 dark:text-black/40">/mo</span></div></div><div class="p-8 flex-1"><ul class="flex flex-col gap-3 mb-8"><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-white dark:text-black">+</span><span class="text-white/70 dark:text-black/70">Unlimited projects</span></li><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-white dark:text-black">+</span><span class="text-white/70 dark:text-black/70">All components</span></li><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-white dark:text-black">+</span><span class="text-white/70 dark:text-black/70">Priority support</span></li><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-white dark:text-black">+</span><span class="text-white/70 dark:text-black/70">Figma kit</span></li></ul><button class="w-full py-3.5 text-xs font-black uppercase tracking-widest transition-colors border-2 border-white text-white hover:bg-white hover:text-black dark:border-black dark:text-black dark:hover:bg-black dark:hover:text-white">Start trial</button></div></div><div class="flex flex-col border-r-2 border-b-2 border-black dark:border-white relative bg-white text-black dark:bg-black dark:text-white"><div class="p-8 border-b-2 border-black dark:border-white"><p class="text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-black/30 dark:text-white/30">Enterprise</p><div class="flex items-end gap-2 mb-3"><span class="text-6xl font-black leading-none tracking-tighter font-mono">Custom</span><span class="text-xs font-bold uppercase tracking-widest mb-1 text-black/30 dark:text-white/30">/mo</span></div></div><div class="p-8 flex-1"><ul class="flex flex-col gap-3 mb-8"><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-black dark:text-white">+</span><span class="text-black/60 dark:text-white/60">SSO &amp; SAML</span></li><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-black dark:text-white">+</span><span class="text-black/60 dark:text-white/60">SLA guarantee</span></li><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-black dark:text-white">+</span><span class="text-black/60 dark:text-white/60">Dedicated support</span></li><li class="flex items-start gap-3 text-xs"><span class="shrink-0 font-black font-mono mt-0.5 text-black dark:text-white">+</span><span class="text-black/60 dark:text-white/60">Custom contracts</span></li></ul><button class="w-full py-3.5 text-xs font-black uppercase tracking-widest transition-colors border-2 border-black text-black hover:bg-black hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black">Contact sales</button></div></div></div></div></section><section class="py-24 md:py-32 px-6 bg-white dark:bg-black border-b-2 border-black dark:border-white"><div class="max-w-3xl mx-auto"><div class="mb-16 pb-8 border-b-2 border-black dark:border-white"><p class="text-[10px] font-black uppercase tracking-[0.3em] mb-3 text-black/30 dark:text-white/30">FAQ</p><h2 class="text-4xl md:text-6xl font-black uppercase leading-none tracking-tighter text-black dark:text-white">Frequently asked questions</h2></div><div class="border-t-2 border-black dark:border-white"><details class="group border-b-2 border-black dark:border-white"><summary class="flex items-center justify-between gap-4 py-5 cursor-pointer select-none list-none appearance-none [&amp;::-webkit-details-marker]:hidden transition-colors hover:bg-black/5 dark:hover:bg-white/5 px-2 -mx-2"><span class="text-xs font-black uppercase tracking-widest text-black dark:text-white">Is there a free plan?</span><span class="shrink-0 w-6 h-6 border-2 border-black dark:border-white flex items-center justify-center text-xs font-black transition-transform group-open:rotate-45 text-black dark:text-white">+</span></summary><div class="pb-6 pt-4 border-t-2 border-black/10 dark:border-white/10 mt-1"><p class="text-xs leading-relaxed font-mono text-black/40 dark:text-white/40">Yes — our Starter tier is free forever with no credit card required.</p></div></details><details class="group border-b-2 border-black dark:border-white"><summary class="flex items-center justify-between gap-4 py-5 cursor-pointer select-none list-none appearance-none [&amp;::-webkit-details-marker]:hidden transition-colors hover:bg-black/5 dark:hover:bg-white/5 px-2 -mx-2"><span class="text-xs font-black uppercase tracking-widest text-black dark:text-white">Can I self-host?</span><span class="shrink-0 w-6 h-6 border-2 border-black dark:border-white flex items-center justify-center text-xs font-black transition-transform group-open:rotate-45 text-black dark:text-white">+</span></summary><div class="pb-6 pt-4 border-t-2 border-black/10 dark:border-white/10 mt-1"><p class="text-xs leading-relaxed font-mono text-black/40 dark:text-white/40">Enterprise customers can request a self-hosted deployment option.</p></div></details><details class="group border-b-2 border-black dark:border-white"><summary class="flex items-center justify-between gap-4 py-5 cursor-pointer select-none list-none appearance-none [&amp;::-webkit-details-marker]:hidden transition-colors hover:bg-black/5 dark:hover:bg-white/5 px-2 -mx-2"><span class="text-xs font-black uppercase tracking-widest text-black dark:text-white">What frameworks are supported?</span><span class="shrink-0 w-6 h-6 border-2 border-black dark:border-white flex items-center justify-center text-xs font-black transition-transform group-open:rotate-45 text-black dark:text-white">+</span></summary><div class="pb-6 pt-4 border-t-2 border-black/10 dark:border-white/10 mt-1"><p class="text-xs leading-relaxed font-mono text-black/40 dark:text-white/40">React, Vue, and vanilla HTML/JS are all first-class targets.</p></div></details></div></div></section><section class="py-0 bg-white dark:bg-black border-b-2 border-black dark:border-white"><div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2"><div class="flex flex-col justify-center gap-6 px-12 py-20 lg:border-r-2 border-black dark:border-white"><h2 class="text-5xl md:text-7xl font-black uppercase leading-none tracking-tighter text-black dark:text-white">Start building today.</h2><p class="text-sm text-black/50 dark:text-white/50 max-w-sm leading-relaxed">No credit card. No lock-in. Just great components.</p></div><div class="flex flex-col justify-center gap-0 px-12 py-20"><button class="w-full py-5 text-xs font-black uppercase tracking-widest transition-colors border-2 border-black mb-0 bg-black text-white hover:bg-white hover:text-black dark:bg-white dark:text-black dark:border-white dark:hover:bg-black dark:hover:text-white">Get started free</button><button class="w-full py-5 text-xs font-black uppercase tracking-widest transition-colors border-2 border-t-0 border-black bg-white text-black hover:bg-black hover:text-white dark:bg-black dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-black">Talk to us</button></div></div></section><footer class="border-t-2 border-black dark:border-white bg-white dark:bg-black text-black dark:text-white"><div class="max-w-7xl mx-auto px-6 lg:px-10"><div class="grid grid-cols-2 md:grid-cols-4 border-b-2 border-black dark:border-white"><div class="col-span-2 md:col-span-1 py-12 md:border-r-2 border-black dark:border-white pr-8"><p class="text-sm font-black uppercase tracking-[0.2em] mb-3">Forma</p><p class="text-xs leading-relaxed text-black/40 dark:text-white/40 max-w-xs">Building the tools that move modern teams forward.</p></div><div class="py-12 px-8 border-r-2 border-black dark:border-white last:border-r-0"><h5 class="text-[10px] font-black uppercase tracking-[0.3em] mb-6 text-black/30 dark:text-white/30">Product</h5><ul class="flex flex-col gap-3"><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">Features</a></li><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">Pricing</a></li><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">Changelog</a></li></ul></div><div class="py-12 px-8 border-r-2 border-black dark:border-white last:border-r-0"><h5 class="text-[10px] font-black uppercase tracking-[0.3em] mb-6 text-black/30 dark:text-white/30">Developers</h5><ul class="flex flex-col gap-3"><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">Docs</a></li><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">GitHub</a></li><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">Status</a></li></ul></div><div class="py-12 px-8 border-r-2 border-black dark:border-white last:border-r-0"><h5 class="text-[10px] font-black uppercase tracking-[0.3em] mb-6 text-black/30 dark:text-white/30">Company</h5><ul class="flex flex-col gap-3"><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">About</a></li><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">Blog</a></li><li><a class="text-xs font-bold uppercase tracking-widest transition-colors text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">Careers</a></li></ul></div></div><div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6"><p class="text-[10px] font-bold uppercase tracking-widest text-black/30 dark:text-white/30">© 2026 Forma</p><div class="flex gap-6"><a class="text-[10px] font-bold uppercase tracking-widest transition-colors text-black/30 hover:text-black dark:text-white/30 dark:hover:text-white">Privacy</a><a class="text-[10px] font-bold uppercase tracking-widest transition-colors text-black/30 hover:text-black dark:text-white/30 dark:hover:text-white">Terms</a><a class="text-[10px] font-bold uppercase tracking-widest transition-colors text-black/30 hover:text-black dark:text-white/30 dark:hover:text-white">Cookies</a></div></div></div></footer><div class="min-h-screen bg-white dark:bg-black flex"><aside class="w-60 h-full flex flex-col border-r-2 transition-all duration-300 shrink-0 border-black bg-white text-black dark:border-white dark:bg-black dark:text-white"><div class="h-14 flex items-center border-b-2 border-black dark:border-white px-5"><span class="text-xs font-black uppercase tracking-[0.2em]">Dashboard</span></div><nav class="flex-1 overflow-y-auto py-2"><div class="relative group"><a class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-colors cursor-pointer border-l-4 border-black bg-black text-white dark:border-white dark:bg-white dark:text-black"><span class="text-base shrink-0 font-mono">▦</span><span class="flex-1 truncate">Overview</span></a></div><div class="relative group"><a class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-colors cursor-pointer border-l-4 border-transparent text-black/40 hover:border-black hover:text-black hover:bg-black/5 dark:text-white/40 dark:hover:border-white dark:hover:text-white dark:hover:bg-white/5"><span class="text-base shrink-0 font-mono">👤</span><span class="flex-1 truncate">Users</span></a></div><div class="relative group"><a class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-colors cursor-pointer border-l-4 border-transparent text-black/40 hover:border-black hover:text-black hover:bg-black/5 dark:text-white/40 dark:hover:border-white dark:hover:text-white dark:hover:bg-white/5"><span class="text-base shrink-0 font-mono">$</span><span class="flex-1 truncate">Revenue</span></a></div><div class="relative group"><a class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-colors cursor-pointer border-l-4 border-transparent text-black/40 hover:border-black hover:text-black hover:bg-black/5 dark:text-white/40 dark:hover:border-white dark:hover:text-white dark:hover:bg-white/5"><span class="text-base shrink-0 font-mono">⚙</span><span class="flex-1 truncate">Settings</span></a></div></nav><div class="border-t-2 border-black dark:border-white py-2"><a class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-l-4 border-transparent text-black/40 hover:border-black hover:text-black hover:bg-black/5 dark:text-white/40 dark:hover:border-white dark:hover:text-white dark:hover:bg-white/5"><span class="text-base font-mono">⚙</span><span class="">Settings</span></a></div></aside><div class="flex-1 flex flex-col"><div class="h-14 border-b-2 border-black dark:border-white px-6 flex items-center justify-between"><nav class="flex items-center gap-2"><div class="flex items-center gap-2"><a class="text-[10px] font-bold uppercase tracking-widest transition-colors text-black/40 hover:text-black dark:text-white/40 dark:hover:text-white">Dashboard</a></div><div class="flex items-center gap-2"><span class="text-[10px] font-black text-black/20 dark:text-white/20">/</span><span class="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">Overview</span></div></nav><div class="flex items-center gap-4"><div class="relative inline-block group"><button class="inline-flex items-center gap-3 px-5 py-2.5 text-[10px] font-black uppercase tracking-widest border-2 transition-colors border-black text-black hover:bg-black hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black">Create<span class="font-mono text-xs">▾</span></button><div class="absolute right-0 mt-0 min-w-48 border-2 border-t-0 z-50 overflow-hidden opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-100 border-black bg-white dark:border-white dark:bg-black"><ul class=""><li><a class="flex items-center gap-3 px-5 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer border-b border-black/10 last:border-0 dark:border-white/10 text-black/60 hover:text-white hover:bg-black dark:text-white/60 dark:hover:text-black dark:hover:bg-white">New user</a></li><li><a class="flex items-center gap-3 px-5 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer border-b border-black/10 last:border-0 dark:border-white/10 text-black/60 hover:text-white hover:bg-black dark:text-white/60 dark:hover:text-black dark:hover:bg-white">New invoice</a></li><li class="border-t border-black/10 dark:border-white/10 my-0"></li><li><a class="flex items-center gap-3 px-5 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer border-b border-black/10 last:border-0 dark:border-white/10 text-black/60 hover:text-white hover:bg-black dark:text-white/60 dark:hover:text-black dark:hover:bg-white">Export data</a></li></ul></div></div><div class="relative inline-flex shrink-0"><div class="w-9 h-9 text-xs border-2 border-black dark:border-white flex items-center justify-center font-black tracking-tighter bg-white text-black dark:bg-black dark:text-white">PD</div><span class="absolute bottom-0 right-0 block w-2.5 h-2.5 border-2 border-white dark:border-black bg-black dark:bg-white"></span></div></div></div><div class="p-8 flex flex-col gap-10"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><div class="border-2 border-black dark:border-white p-6 flex flex-col gap-5 bg-white dark:bg-black"><div class="flex items-start justify-between"><div class="flex flex-col gap-1"><span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30">Revenue</span><span class="text-5xl font-black tabular-nums tracking-tighter leading-none font-mono text-black dark:text-white">$24,900</span></div></div><div class="flex items-center gap-2 border-t border-black/10 dark:border-white/10 pt-4"><span class="text-xs font-black font-mono text-emerald-600 dark:text-emerald-400">+12%</span><span class="text-[10px] uppercase tracking-widest font-bold text-black/30 dark:text-white/30">vs last period</span></div></div><div class="border-2 border-black dark:border-white p-6 flex flex-col gap-5 bg-white dark:bg-black"><div class="flex items-start justify-between"><div class="flex flex-col gap-1"><span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30">Users</span><span class="text-5xl font-black tabular-nums tracking-tighter leading-none font-mono text-black dark:text-white">1,204</span></div></div><div class="flex items-center gap-2 border-t border-black/10 dark:border-white/10 pt-4"><span class="text-xs font-black font-mono text-emerald-600 dark:text-emerald-400">+5%</span><span class="text-[10px] uppercase tracking-widest font-bold text-black/30 dark:text-white/30">vs last period</span></div></div><div class="border-2 border-black dark:border-white p-6 flex flex-col gap-5 bg-white dark:bg-black"><div class="flex items-start justify-between"><div class="flex flex-col gap-1"><span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30">Orders</span><span class="text-5xl font-black tabular-nums tracking-tighter leading-none font-mono text-black dark:text-white">320</span></div></div><div class="flex items-center gap-2 border-t border-black/10 dark:border-white/10 pt-4"><span class="text-xs font-black font-mono text-red-600 dark:text-red-400">-3%</span><span class="text-[10px] uppercase tracking-widest font-bold text-black/30 dark:text-white/30">vs last period</span></div></div><div class="border-2 border-black dark:border-white p-6 flex flex-col gap-5 bg-white dark:bg-black"><div class="flex items-start justify-between"><div class="flex flex-col gap-1"><span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30">Conversion</span><span class="text-5xl font-black tabular-nums tracking-tighter leading-none font-mono text-black dark:text-white">3.2%</span></div></div><div class="flex items-center gap-2 border-t border-black/10 dark:border-white/10 pt-4"><span class="text-xs font-black font-mono text-emerald-600 dark:text-emerald-400">+0.4%</span><span class="text-[10px] uppercase tracking-widest font-bold text-black/30 dark:text-white/30">vs last period</span></div></div></div><div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><div class="lg:col-span-2 flex flex-col gap-6"><article class="border-2 border-black dark:border-white bg-white text-black dark:bg-black dark:text-white"><div class="p-6 flex flex-col gap-4"><h3 class="text-sm font-black uppercase tracking-widest leading-tight">Recent Users</h3><p class="text-xs leading-relaxed text-black/50 dark:text-white/50 font-mono">Latest registered accounts.</p></div></article><div class="border-2 border-black dark:border-white bg-white dark:bg-black overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead><tr class="border-b-2 border-black dark:border-white bg-black dark:bg-white"><th class="px-5 py-3.5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-white dark:text-black">Name</th><th class="px-5 py-3.5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-white dark:text-black">Email</th><th class="px-5 py-3.5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-white dark:text-black">Role</th></tr></thead><tbody><tr class="border-b border-black/10 dark:border-white/10 last:border-b-0 transition-colors hover:bg-black/5 dark:hover:bg-white/5"><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">Ana Silva</td><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">ana@mail.com</td><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">Admin</td></tr><tr class="border-b border-black/10 dark:border-white/10 last:border-b-0 transition-colors hover:bg-black/5 dark:hover:bg-white/5"><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">Lucas Costa</td><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">lucas@mail.com</td><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">Editor</td></tr><tr class="border-b border-black/10 dark:border-white/10 last:border-b-0 transition-colors hover:bg-black/5 dark:hover:bg-white/5"><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">Marina Souza</td><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">marina@mail.com</td><td class="px-5 py-3.5 text-xs font-mono text-black/70 dark:text-white/70">Viewer</td></tr></tbody></table></div></div></div><div class="flex flex-col gap-6"><article class="border-2 border-black dark:border-white bg-white text-black dark:bg-black dark:text-white"><div class="p-6 flex flex-col gap-4"><h3 class="text-sm font-black uppercase tracking-widest leading-tight">Storage Usage</h3></div><div class="px-6 pb-6 pt-4 border-t-2 border-black dark:border-white"><div class="flex flex-col gap-2"><div class="flex items-center justify-between"><span class="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">Used</span><span class="text-[10px] font-black font-mono text-black/40 dark:text-white/40">72%</span></div><div class="w-full h-1.5 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20"><div class="h-full transition-all duration-500 bg-black dark:bg-white" style="width: 72%"></div></div></div></div></article><article class="border-2 border-black dark:border-white bg-white text-black dark:bg-black dark:text-white"><div class="p-6 flex flex-col gap-4"><h3 class="text-sm font-black uppercase tracking-widest leading-tight">System Status</h3><p class="text-xs leading-relaxed text-black/50 dark:text-white/50 font-mono">All services operational.</p></div><div class="px-6 pb-6 pt-4 border-t-2 border-black dark:border-white"><span class="inline-flex items-center px-2 py-0.5 border text-[10px] font-black uppercase tracking-[0.15em] border-emerald-600 text-emerald-700 dark:border-emerald-400 dark:text-emerald-400">Healthy</span></div></article><article class="border-2 border-black dark:border-white bg-white text-black dark:bg-black dark:text-white"><div class="p-6 flex flex-col gap-4"><h3 class="text-sm font-black uppercase tracking-widest leading-tight">Quick Actions</h3></div><div class="px-6 pb-6 pt-4 border-t-2 border-black dark:border-white"><div class="flex flex-col gap-3"><button class="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest transition-colors px-6 py-3 text-xs bg-black text-white border-2 border-black hover:bg-white hover:text-black dark:bg-white dark:text-black dark:border-white dark:hover:bg-black dark:hover:text-white cursor-pointer">Create User</button><button class="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest transition-colors px-6 py-3 text-xs bg-white text-black border-2 border-black hover:bg-black hover:text-white dark:bg-black dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-black cursor-pointer">Generate Report</button></div></div></article></div></div></div></div></div><form class="max-w-xl mx-auto p-8 rounded-2xl border bg-white border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800 flex flex-col gap-6"><div class="flex flex-col gap-1"><h2 class="text-2xl font-black tracking-tight text-zinc-950 dark:text-white">Create account</h2><p class="text-sm text-zinc-500 dark:text-zinc-400">Fill the information below to get started.</p></div><div class="flex flex-col gap-2"><label class="text-[10px] font-black uppercase tracking-[0.2em] text-black dark:text-white">Full name</label><input class="w-full px-4 py-3 border-2 text-sm font-mono outline-none transition-colors bg-white text-black placeholder-black/30 border-black focus:border-black focus:bg-black/5 dark:bg-black dark:text-white dark:placeholder-white/30 dark:border-white dark:focus:bg-white/5" type="text" placeholder="John Doe"></div><div class="flex flex-col gap-2"><label class="text-[10px] font-black uppercase tracking-[0.2em] text-black dark:text-white">Email</label><input class="w-full px-4 py-3 border-2 text-sm font-mono outline-none transition-colors bg-white text-black placeholder-black/30 border-black focus:border-black focus:bg-black/5 dark:bg-black dark:text-white dark:placeholder-white/30 dark:border-white dark:focus:bg-white/5" type="email" placeholder="john@company.com"></div><div class="flex flex-col gap-2"><label class="text-[10px] font-black uppercase tracking-[0.2em] text-black dark:text-white">Password</label><input class="w-full px-4 py-3 border-2 text-sm font-mono outline-none transition-colors bg-white text-black placeholder-black/30 border-black focus:border-black focus:bg-black/5 dark:bg-black dark:text-white dark:placeholder-white/30 dark:border-white dark:focus:bg-white/5" type="password" placeholder="••••••••"><span class="text-[10px] font-mono text-black/30 dark:text-white/30">Minimum 8 characters</span></div><div class="flex items-center justify-between"><label class="inline-flex items-center gap-4 cursor-pointer select-none"><div class="relative w-10 h-6 border-2 transition-colors border-black dark:border-white bg-white dark:bg-black"><span class="absolute top-0.5 w-4 h-4 transition-transform translate-x-0.5 bg-black dark:bg-white"></span></div><span class="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">Accept terms</span></label><a class="text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">Read terms</a></div><div class="flex flex-col gap-3 pt-2"><button class="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest transition-colors px-6 py-3 text-xs bg-black text-white border-2 border-black hover:bg-white hover:text-black dark:bg-white dark:text-black dark:border-white dark:hover:bg-black dark:hover:text-white cursor-pointer">Create account</button><button class="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest transition-colors px-6 py-3 text-xs bg-transparent text-black border-2 border-transparent hover:border-black dark:text-white dark:hover:border-white cursor-pointer">Cancel</button></div></form><h1>Universal API Tester</h1><section><h2>POST: Create Post</h2><form id="create-form"><input name="title" placeholder="Post Title"><textarea name="body" placeholder="Post content..."></textarea><button>Create Post</button><div class="result">Waiting for action...</div></form><script>
-  (() => {
-    const form = document.querySelector("#create-form");
-    if (!form) return;
+<html><head><title>Full API Test</title><script src="https://cdn.tailwindcss.com"></script></head><body><h1>Universal API Tester</h1><div class="loading">Loading...</div><section><h2>POST: Create Post</h2><form id="create-form"><input name="title" placeholder="Post Title"><textarea name="body" placeholder="Post content..."></textarea><button>Create Post</button></form><div id="post-result"></div></section><section><h2>PUT: Update User</h2><form id="update-form"><input name="id" placeholder="User ID to update"><input name="name" placeholder="New Name"><button>Update Name</button><div class="update-status">Waiting for action...</div></form></section><section><h2>DELETE: Remove Post</h2><div><input id="del-id" name="id" placeholder="Post ID"><button id="del-btn" style="background: red">Delete Now</button></div><div id="delete-log">No deletions yet.</div></section><section><h2>GET: Fetch User on Change</h2><div><label>Select User ID: </label><input id="user-select" name="id" type="number" value="1"></div><div id="user-card">Change the number to fetch...</div></section><script>
+(() => {
+  const el = document.querySelector("#create-form");
+  if (!el) return;
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const target = form.querySelector("[data-result]") || form.querySelector(".result");
-      if (target) {
-        target.innerHTML = `Sending...`;
-      } else {
-        // Fallback: Create a temporary status message if no target exists
-        let status = form.querySelector(".form-status");
-        if (!status) {
-          status = document.createElement("div");
-          status.className = "form-status";
-          form.appendChild(status);
-        }
-        status.innerHTML = `Sending...`;
+  const loadingEl = ".loading" ? document.querySelector(".loading") : null;
+  if (loadingEl) loadingEl.style.display = "none";
+
+  el.addEventListener("submit", async (e) => {
+    if ("submit" === "submit") e.preventDefault();
+
+    const swapSelector = "#post-result";
+    const target =
+      swapSelector
+        ? document.querySelector(swapSelector)
+        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+
+    if (loadingEl) loadingEl.style.display = "";
+
+    try {
+      const data = {};
+
+      if (el.tagName === "FORM") {
+        new FormData(el).forEach((v, k) => { data[k] = v; });
+      } else if (el.name || el.value !== undefined) {
+        data[el.name || "value"] = el.value;
       }
 
-      try {
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => { data[key] = value; });
-        
-        let finalUrl = "https://jsonplaceholder.typicode.com/posts";
-        
-        // Improved replacement logic
-        Object.keys(data).forEach(key => {
-          const regex = new RegExp(":" + key, "g");
-          if (regex.test(finalUrl)) {
-            finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-            if ("json" === "param") delete data[key];
-          }
-        });
-
-        let options = { 
-          method: "POST", 
-          headers: { "Content-Type": "application/json" } 
-        };
-
-        if (options.method !== "GET") {
-          options.body = JSON.stringify(data);
+      let finalUrl = "https://jsonplaceholder.typicode.com/posts";
+      Object.keys(data).forEach(key => {
+        const regex = new RegExp(":" + key, "g");
+        if (regex.test(finalUrl)) {
+          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
+          if ("json" === "param") delete data[key];
         }
+      });
 
-        const res = await fetch(finalUrl, options);
-        if (!res.ok) throw new Error("Server Error: " + res.status);
-        const resultData = await res.json();
+      const options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      };
 
-        const parse = (tpl, item) => {
-          return tpl.split('{').map((part, i) => {
-            if (i === 0) return part;
-            const [path, ...rest] = part.split('}');
-            const value = path.split('.').reduce((obj, key) => obj?.[key], item);
-            return (value !== undefined && value !== null ? value : "") + rest.join('}');
-          }).join('');
-        };
-
-        if (target) {
-          target.innerHTML = `<div>✅ Created ID: {id}</div>` ? parse(`<div>✅ Created ID: {id}</div>`, resultData) : "Success!";
-        } else {
-          alert("Success!");
-        }
-
-        e.target.reset()
-      } catch (e) {
-        console.error("FormAction Error:", e.message);
-        if (target) {
-          // Restore the original UI on error so the form doesn't vanish
-          target.innerHTML = `<div style="color:red">${e.message}</div>` + (originalHTML || "");
-        } else {
-          alert(`Action failed.`);
-        }
-      }
-    };
-  })();
-</script></section><section><h2>PUT: Update User</h2><form id="update-form"><input name="id" placeholder="User ID to update (e.g. 1)"><input name="name" placeholder="New Name"><button>Update Name</button><div class="result">Waiting for action...</div></form><script>
-  (() => {
-    const form = document.querySelector("#update-form");
-    if (!form) return;
-
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const target = form.querySelector("[data-result]") || form.querySelector(".result");
-      if (target) {
-        target.innerHTML = `Sending...`;
-      } else {
-        // Fallback: Create a temporary status message if no target exists
-        let status = form.querySelector(".form-status");
-        if (!status) {
-          status = document.createElement("div");
-          status.className = "form-status";
-          form.appendChild(status);
-        }
-        status.innerHTML = `Sending...`;
+      if (options.method !== "GET") {
+        options.body = JSON.stringify(data);
       }
 
-      try {
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => { data[key] = value; });
-        
-        let finalUrl = "https://jsonplaceholder.typicode.com/users/:id";
-        
-        // Improved replacement logic
-        Object.keys(data).forEach(key => {
-          const regex = new RegExp(":" + key, "g");
-          if (regex.test(finalUrl)) {
-            finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-            if ("param" === "param") delete data[key];
-          }
-        });
+      const res = await fetch(finalUrl, options);
+      if (!res.ok) throw new Error("Server Error: " + res.status);
 
-        let options = { 
-          method: "PUT", 
-          headers: { "Content-Type": "application/json" } 
-        };
+      const resultData = await res.json();
 
-        if (options.method !== "GET") {
-          options.body = JSON.stringify(data);
-        }
+      const parse = (tpl, item) => {
+        return tpl.split("{").map((part, i) => {
+          if (i === 0) return part;
+          const [path, ...rest] = part.split("}");
+          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
+          return (value !== undefined && value !== null ? value : "") + rest.join("}");
+        }).join("");
+      };
 
-        const res = await fetch(finalUrl, options);
-        if (!res.ok) throw new Error("Server Error: " + res.status);
-        const resultData = await res.json();
-
-        const parse = (tpl, item) => {
-          return tpl.split('{').map((part, i) => {
-            if (i === 0) return part;
-            const [path, ...rest] = part.split('}');
-            const value = path.split('.').reduce((obj, key) => obj?.[key], item);
-            return (value !== undefined && value !== null ? value : "") + rest.join('}');
-          }).join('');
-        };
-
-        if (target) {
-          target.innerHTML = `<div>👤 Updated: {name}</div>` ? parse(`<div>👤 Updated: {name}</div>`, resultData) : "Success!";
-        } else {
-          alert("Success!");
-        }
-
-        
-      } catch (e) {
-        console.error("FormAction Error:", e.message);
-        if (target) {
-          // Restore the original UI on error so the form doesn't vanish
-          target.innerHTML = `<div style="color:red">${e.message}</div>` + (originalHTML || "");
-        } else {
-          alert(`Action failed.`);
-        }
-      }
-    };
-  })();
-</script></section><section><h2>DELETE: Remove Post</h2><form id="delete-form"><input name="id" placeholder="Post ID to delete"><button style="background: red">Delete Post</button><div class="result"></div></form><script>
-  (() => {
-    const form = document.querySelector("#delete-form");
-    if (!form) return;
-
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const target = form.querySelector("[data-result]") || form.querySelector(".result");
-      if (target) {
-        target.innerHTML = `Deleting...`;
-      } else {
-        // Fallback: Create a temporary status message if no target exists
-        let status = form.querySelector(".form-status");
-        if (!status) {
-          status = document.createElement("div");
-          status.className = "form-status";
-          form.appendChild(status);
-        }
-        status.innerHTML = `Deleting...`;
+      if (target && `<div>✅ Created ID: {id}</div>`) {
+        target.innerHTML = parse(`<div>✅ Created ID: {id}</div>`, resultData);
       }
 
-      try {
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => { data[key] = value; });
-        
-        let finalUrl = "https://jsonplaceholder.typicode.com/posts/:id";
-        
-        // Improved replacement logic
-        Object.keys(data).forEach(key => {
-          const regex = new RegExp(":" + key, "g");
-          if (regex.test(finalUrl)) {
-            finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-            if ("param" === "param") delete data[key];
-          }
-        });
-
-        let options = { 
-          method: "DELETE", 
-          headers: { "Content-Type": "application/json" } 
-        };
-
-        if (options.method !== "GET") {
-          options.body = JSON.stringify(data);
-        }
-
-        const res = await fetch(finalUrl, options);
-        if (!res.ok) throw new Error("Server Error: " + res.status);
-        const resultData = await res.json();
-
-        const parse = (tpl, item) => {
-          return tpl.split('{').map((part, i) => {
-            if (i === 0) return part;
-            const [path, ...rest] = part.split('}');
-            const value = path.split('.').reduce((obj, key) => obj?.[key], item);
-            return (value !== undefined && value !== null ? value : "") + rest.join('}');
-          }).join('');
-        };
-
-        if (target) {
-          target.innerHTML = `<div>🗑️ Deleted successfully!</div>` ? parse(`<div>🗑️ Deleted successfully!</div>`, resultData) : "Success!";
-        } else {
-          alert("Success!");
-        }
-
-        
-      } catch (e) {
-        console.error("FormAction Error:", e.message);
-        if (target) {
-          // Restore the original UI on error so the form doesn't vanish
-          target.innerHTML = `<div style="color:red">${e.message}</div>` + (originalHTML || "");
-        } else {
-          alert(`Action failed.`);
-        }
-      }
-    };
-  })();
-</script></section><section><h2>GET: Fetch User by ID</h2><form id="get-form"><input name="id" placeholder="User ID"><button style="background: #28a745">Fetch Data</button><div class="result"></div></form><script>
-  (() => {
-    const form = document.querySelector("#get-form");
-    if (!form) return;
-
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const target = form.querySelector("[data-result]") || form.querySelector(".result");
-      if (target) {
-        target.innerHTML = `Sending...`;
-      } else {
-        // Fallback: Create a temporary status message if no target exists
-        let status = form.querySelector(".form-status");
-        if (!status) {
-          status = document.createElement("div");
-          status.className = "form-status";
-          form.appendChild(status);
-        }
-        status.innerHTML = `Sending...`;
+      if (loadingEl && loadingEl !== target) {
+        loadingEl.style.display = "none";
       }
 
-      try {
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => { data[key] = value; });
-        
-        let finalUrl = "https://jsonplaceholder.typicode.com/users/:id";
-        
-        // Improved replacement logic
-        Object.keys(data).forEach(key => {
-          const regex = new RegExp(":" + key, "g");
-          if (regex.test(finalUrl)) {
-            finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-            if ("param" === "param") delete data[key];
-          }
-        });
+      ((r) => {
+    console.log(r);
+  })(resultData);
 
-        let options = { 
-          method: "GET", 
-          headers: { "Content-Type": "application/json" } 
-        };
-
-        if (options.method !== "GET") {
-          options.body = JSON.stringify(data);
-        }
-
-        const res = await fetch(finalUrl, options);
-        if (!res.ok) throw new Error("Server Error: " + res.status);
-        const resultData = await res.json();
-
-        const parse = (tpl, item) => {
-          return tpl.split('{').map((part, i) => {
-            if (i === 0) return part;
-            const [path, ...rest] = part.split('}');
-            const value = path.split('.').reduce((obj, key) => obj?.[key], item);
-            return (value !== undefined && value !== null ? value : "") + rest.join('}');
-          }).join('');
-        };
-
-        if (target) {
-          target.innerHTML = `<div><h4>{name}</h4><p>Email: {email}</p><p>Company: {company.name}</p></div>` ? parse(`<div><h4>{name}</h4><p>Email: {email}</p><p>Company: {company.name}</p></div>`, resultData) : "Success!";
-        } else {
-          alert("Success!");
-        }
-
-        
-      } catch (e) {
-        console.error("FormAction Error:", e.message);
-        if (target) {
-          // Restore the original UI on error so the form doesn't vanish
-          target.innerHTML = `<div style="color:red">${e.message}</div>` + (originalHTML || "");
-        } else {
-          alert(`Action failed.`);
-        }
+    } catch (err) {
+      if (loadingEl && loadingEl !== target) {
+        loadingEl.style.display = "none";
       }
-    };
-  })();
-</script></section></body></html>
+
+      ((r) => console.error(r.message))({ message: err.message });
+    }
+  });
+})();
+
+(() => {
+  const el = document.querySelector("#update-form");
+  if (!el) return;
+
+  const loadingEl = ".update-status" ? document.querySelector(".update-status") : null;
+  if (loadingEl) loadingEl.style.display = "none";
+
+  el.addEventListener("submit", async (e) => {
+    if ("submit" === "submit") e.preventDefault();
+
+    const swapSelector = ".update-status";
+    const target =
+      swapSelector
+        ? document.querySelector(swapSelector)
+        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+
+    if (loadingEl) loadingEl.style.display = "";
+
+    try {
+      const data = {};
+
+      if (el.tagName === "FORM") {
+        new FormData(el).forEach((v, k) => { data[k] = v; });
+      } else if (el.name || el.value !== undefined) {
+        data[el.name || "value"] = el.value;
+      }
+
+      let finalUrl = "https://jsonplaceholder.typicode.com/users/:id";
+      Object.keys(data).forEach(key => {
+        const regex = new RegExp(":" + key, "g");
+        if (regex.test(finalUrl)) {
+          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
+          if ("param" === "param") delete data[key];
+        }
+      });
+
+      const options = {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" }
+      };
+
+      if (options.method !== "GET") {
+        options.body = JSON.stringify(data);
+      }
+
+      const res = await fetch(finalUrl, options);
+      if (!res.ok) throw new Error("Server Error: " + res.status);
+
+      const resultData = await res.json();
+
+      const parse = (tpl, item) => {
+        return tpl.split("{").map((part, i) => {
+          if (i === 0) return part;
+          const [path, ...rest] = part.split("}");
+          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
+          return (value !== undefined && value !== null ? value : "") + rest.join("}");
+        }).join("");
+      };
+
+      if (target && `<div>👤 Updated: {name}</div>`) {
+        target.innerHTML = parse(`<div>👤 Updated: {name}</div>`, resultData);
+      }
+
+      if (loadingEl && loadingEl !== target) {
+        loadingEl.style.display = "none";
+      }
+
+      ((r) => console.log(r))(resultData);
+
+    } catch (err) {
+      if (loadingEl && loadingEl !== target) {
+        loadingEl.style.display = "none";
+      }
+
+      ((r) => console.error(r.message))({ message: err.message });
+    }
+  });
+})();
+
+(() => {
+  const el = document.querySelector("#del-btn");
+  if (!el) return;
+
+  const loadingEl = "#delete-log" ? document.querySelector("#delete-log") : null;
+  if (loadingEl) loadingEl.style.display = "none";
+
+  el.addEventListener("click", async (e) => {
+    if ("click" === "submit") e.preventDefault();
+
+    const swapSelector = "#delete-log";
+    const target =
+      swapSelector
+        ? document.querySelector(swapSelector)
+        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+
+    if (loadingEl) loadingEl.style.display = "";
+
+    try {
+      const data = {};
+
+      if (el.tagName === "FORM") {
+        new FormData(el).forEach((v, k) => { data[k] = v; });
+      } else if (el.name || el.value !== undefined) {
+        data[el.name || "value"] = el.value;
+      }
+
+      let finalUrl = "https://jsonplaceholder.typicode.com/posts/:id";
+      Object.keys(data).forEach(key => {
+        const regex = new RegExp(":" + key, "g");
+        if (regex.test(finalUrl)) {
+          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
+          if ("param" === "param") delete data[key];
+        }
+      });
+
+      const options = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
+      };
+
+      if (options.method !== "GET") {
+        options.body = JSON.stringify(data);
+      }
+
+      const res = await fetch(finalUrl, options);
+      if (!res.ok) throw new Error("Server Error: " + res.status);
+
+      const resultData = await res.json();
+
+      const parse = (tpl, item) => {
+        return tpl.split("{").map((part, i) => {
+          if (i === 0) return part;
+          const [path, ...rest] = part.split("}");
+          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
+          return (value !== undefined && value !== null ? value : "") + rest.join("}");
+        }).join("");
+      };
+
+      if (target && `<div>🗑️ Deleted successfully!</div>`) {
+        target.innerHTML = parse(`<div>🗑️ Deleted successfully!</div>`, resultData);
+      }
+
+      if (loadingEl && loadingEl !== target) {
+        loadingEl.style.display = "none";
+      }
+
+      ((r) => console.log(r))(resultData);
+
+    } catch (err) {
+      if (loadingEl && loadingEl !== target) {
+        loadingEl.style.display = "none";
+      }
+
+      ((r) => console.error(r.message))({ message: err.message });
+    }
+  });
+})();
+
+(() => {
+  const el = document.querySelector("#user-select");
+  if (!el) return;
+
+  const loadingEl = "#user-card" ? document.querySelector("#user-card") : null;
+  if (loadingEl) loadingEl.style.display = "none";
+
+  el.addEventListener("change", async (e) => {
+    if ("change" === "submit") e.preventDefault();
+
+    const swapSelector = "#user-card";
+    const target =
+      swapSelector
+        ? document.querySelector(swapSelector)
+        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+
+    if (loadingEl) loadingEl.style.display = "";
+
+    try {
+      const data = {};
+
+      if (el.tagName === "FORM") {
+        new FormData(el).forEach((v, k) => { data[k] = v; });
+      } else if (el.name || el.value !== undefined) {
+        data[el.name || "value"] = el.value;
+      }
+
+      let finalUrl = "https://jsonplaceholder.typicode.com/users/:id";
+      Object.keys(data).forEach(key => {
+        const regex = new RegExp(":" + key, "g");
+        if (regex.test(finalUrl)) {
+          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
+          if ("param" === "param") delete data[key];
+        }
+      });
+
+      const options = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      };
+
+      if (options.method !== "GET") {
+        options.body = JSON.stringify(data);
+      }
+
+      const res = await fetch(finalUrl, options);
+      if (!res.ok) throw new Error("Server Error: " + res.status);
+
+      const resultData = await res.json();
+
+      const parse = (tpl, item) => {
+        return tpl.split("{").map((part, i) => {
+          if (i === 0) return part;
+          const [path, ...rest] = part.split("}");
+          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
+          return (value !== undefined && value !== null ? value : "") + rest.join("}");
+        }).join("");
+      };
+
+      if (target && `<div><h4>{name}</h4><p>Email: {email}</p><p>City: {address.city}</p></div>`) {
+        target.innerHTML = parse(`<div><h4>{name}</h4><p>Email: {email}</p><p>City: {address.city}</p></div>`, resultData);
+      }
+
+      if (loadingEl && loadingEl !== target) {
+        loadingEl.style.display = "none";
+      }
+
+      ((r) => console.log(r))(resultData);
+
+    } catch (err) {
+      if (loadingEl && loadingEl !== target) {
+        loadingEl.style.display = "none";
+      }
+
+      ((r) => console.error(r.message))({ message: err.message });
+    }
+  });
+})();
+</script></body></html>

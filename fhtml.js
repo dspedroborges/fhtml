@@ -3,47 +3,134 @@ import { watch } from "node:fs"; // Use the node:fs watcher for better stability
 import { join, basename, extname } from "path";
 
 function el(tag, props = {}, ...children) {
-  const voidTags = new Set(["area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr"]);
-  const escape = (str) => String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  if (typeof tag === "function") return tag({ ...props, children });
-  const { children: propChildren, ...attrs } = props;
-  const attrString = Object.entries(attrs)
-    .filter(([_, v]) => v != null && v !== false)
-    .map(([k, v]) => {
-      if (v === true) return k;
-      if (k === "style" && typeof v === "object") {
-        const style = Object.entries(v).map(([p, val]) => `${p.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}:${val}`).join(";");
-        return `style="${escape(style)}"`;
-      }
-      return `${k}="${escape(v)}"`;
-    }).join(" ");
+    const voidTags = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"]);
 
-  const flatChildren = [...children, propChildren].flat(Infinity).filter(c => c != null && c !== false)
-    .map(c => {
-      const s = String(c);
-      if (tag === "script" || tag === "style") return s;
-      if (s.startsWith("<") && s.endsWith(">")) return s;
-      return escape(s);
-    }).join("");
+    const escape = (str) =>
+        String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
 
-  const openTag = `<${tag}${attrString ? " " + attrString : ""}>`;
-  if (voidTags.has(tag)) return openTag;
-  return `${openTag}${flatChildren}</${tag}>`;
+    if (typeof tag === "function") {
+        return tag({ ...props, children });
+    }
+
+    const { children: propChildren, ...attrs } = props || {};
+
+    const attrString = Object.entries(attrs)
+        .filter(([_, v]) => v != null && v !== false)
+        .map(([k, v]) => {
+            if (v === true) return k;
+
+            if (k === "style" && typeof v === "object") {
+                const style = Object.entries(v)
+                    .map(([p, val]) =>
+                        `${p.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}:${val}`
+                    )
+                    .join(";");
+                return `style="${escape(style)}"`;
+            }
+
+            return `${k}="${escape(v)}"`;
+        })
+        .join(" ");
+
+    const flatChildren = [...children, propChildren]
+        .flat(Infinity)
+        .filter(c => c != null && c !== false)
+        .map(c => {
+            const s = String(c);
+
+            if (tag === "script" || tag === "style") return s;
+            if (s.startsWith("<") && s.endsWith(">")) return s;
+
+            return escape(s);
+        })
+        .join("");
+
+    const openTag = `<${tag}${attrString ? " " + attrString : ""}>`;
+
+    if (voidTags.has(tag)) return openTag;
+
+    return `${openTag}${flatChildren}</${tag}>`;
 }
 
-const tags = ["html","head","title","base","link","meta","style","script","noscript","body","section","nav","article","aside","h1","h2","h3","h4","h5","h6","header","footer","address","main","p","hr","pre","blockquote","ol","ul","li","dl","dt","dd","figure","figcaption","div","a","em","strong","small","s","cite","q","dfn","abbr","ruby","rt","rp","data","time","code","var","samp","kbd","sub","sup","i","b","u","mark","bdi","bdo","span","br","wbr","ins","del","picture","source","img","iframe","embed","object","param","video","audio","track","map","area","table","caption","colgroup","col","tbody","thead","tfoot","tr","td","th","form","label","input","button","select","datalist","optgroup","option","textarea","output","progress","meter","fieldset","legend","details","summary","dialog","canvas","svg","slot","template"];
+const tags = ["html", "_head", "title", "base", "link", "meta", "style", "script", "noscript", "body", "section", "nav", "article", "aside", "h1", "h2", "h3", "h4", "h5", "h6", "header", "footer", "address", "main", "p", "hr", "pre", "blockquote", "ol", "ul", "li", "dl", "dt", "dd", "figure", "figcaption", "div", "a", "em", "strong", "small", "s", "cite", "q", "dfn", "abbr", "ruby", "rt", "rp", "data", "time", "code", "var", "samp", "kbd", "sub", "sup", "i", "b", "u", "mark", "bdi", "bdo", "span", "br", "wbr", "ins", "del", "picture", "source", "img", "iframe", "embed", "object", "param", "video", "audio", "track", "map", "area", "table", "caption", "colgroup", "col", "tbody", "thead", "tfoot", "tr", "td", "th", "form", "label", "input", "button", "select", "datalist", "optgroup", "option", "textarea", "output", "progress", "meter", "fieldset", "legend", "details", "summary", "dialog", "canvas", "svg", "slot", "template"];
 
 tags.forEach(tag => {
-  globalThis[tag] = (...args) => {
-    let mergedProps = {};
-    let childrenStart = 0;
-    while (childrenStart < args.length && Object.prototype.toString.call(args[childrenStart]) === "[object Object]") {
-      Object.assign(mergedProps, args[childrenStart]);
-      childrenStart++;
-    }
-    return el(tag, mergedProps, ...args.slice(childrenStart));
-  };
+    globalThis[tag] = (...args) => {
+        let mergedProps = {};
+        let childrenStart = 0;
+        while (childrenStart < args.length && Object.prototype.toString.call(args[childrenStart]) === "[object Object]") {
+            Object.assign(mergedProps, args[childrenStart]);
+            childrenStart++;
+        }
+        return el(tag, mergedProps, ...args.slice(childrenStart));
+    };
 });
+
+// BETTER HEAD
+globalThis.head = ({ 
+    title: t, 
+    description: desc, 
+    author, 
+    thumbnail, 
+    url, 
+    icon, 
+    imports = [], 
+    ...rest 
+}) => {
+    const children = [];
+
+    if (t) {
+        children.push(title(t));
+        children.push(meta({ property: "og:title", content: t }));
+        children.push(meta({ name: "twitter:title", content: t }));
+    }
+
+    if (desc) {
+        children.push(meta({ name: "description", content: desc }));
+        children.push(meta({ property: "og:description", content: desc }));
+        children.push(meta({ name: "twitter:description", content: desc }));
+    }
+
+    if (author) {
+        children.push(meta({ name: "author", content: author }));
+    }
+
+    if (thumbnail) {
+        children.push(meta({ property: "og:image", content: thumbnail }));
+        children.push(meta({ name: "twitter:image", content: thumbnail }));
+        children.push(meta({ name: "twitter:card", content: "summary_large_image" }));
+    }
+
+    if (url) {
+        children.push(meta({ property: "og:url", content: url }));
+        children.push(link({ rel: "canonical", href: url }));
+    }
+
+    if (icon) {
+        const ext = icon.split('.').pop();
+        const type = ext === 'svg' ? 'image/svg+xml' : `image/${ext}`;
+        children.push(link({ rel: "icon", type, href: icon }));
+    }
+
+    imports.forEach(path => {
+        const ext = path.split('?')[0].split('.').pop();
+        if (ext === "css") {
+            children.push(link({ rel: "stylesheet", href: path }));
+        } else if (ext === "js" || ext === "mjs") {
+            children.push(script({ src: path, defer: true }));
+        }
+    });
+
+    Object.entries(rest).forEach(([name, content]) => {
+        children.push(meta({ name, content }));
+    });
+
+    return _head(...children);
+};
 
 // GENERAL ATTR HELPERS
 globalThis.id = (val) => ({ id: val });
@@ -70,14 +157,14 @@ globalThis.observe = (selector, className, { once = false } = {}) => `
 `;
 
 // FETCH AND FORM ACTIONS
-globalThis.fetch = (url, selector, template, { 
-  loading = "Loading...", 
-  onSuccess = "", 
-  onError = "Error loading data.",
-  refetchInterval = 0 
+globalThis.fetch = (url, selector, template, {
+    loading = "Loading...",
+    onSuccess = "",
+    onError = "Error loading data.",
+    refetchInterval = 0
 } = {}) => {
-  return script(
-`
+    return script(
+        `
   (async () => {
     const target = document.querySelector("${selector}");
     if (!target) return;
@@ -115,131 +202,127 @@ const parse = (tpl, item) => {
     fetchData();
   })();
   `
-  );
+    );
 };
 
-globalThis.action = (selector, {
-  on = "submit",
-  url,
-  method = "POST",
-  type = "json",
-  loading = { element: "", html: "Sending..." },
-  onSuccess = "",
-  onError = "Action failed.",
-  template = "",
-  swap = ""
-} = {}) => `
-  (() => {
-    const el = document.querySelector("${selector}");
-    if (!el) return;
+globalThis.action = (
+    selector,
+    {
+        on = "submit",
+        url,
+        method = "POST",
+        type = "json",
+        loading = "",
+        onSuccess = () => { },
+        onError = () => { },
+        template = "",
+        target = ""
+    } = {}
+) => `
+(() => {
+  const el = document.querySelector("${selector}");
+  if (!el) return;
 
-    el.addEventListener("${on}", async (e) => {
-      if ("${on}" === "submit") e.preventDefault();
-      
-      const swapSelector = "${swap}";
-      const target = swapSelector 
-        ? document.querySelector(swapSelector) 
-        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+  const loadingEl = "${loading}" ? document.querySelector("${loading}") : null;
+  if (loadingEl) loadingEl.style.display = "none";
 
-      const loaderTarget = "${loading.element}" 
-        ? document.querySelector("${loading.element}") 
-        : target;
+  el.addEventListener("${on}", async (e) => {
+    if ("${on}" === "submit") e.preventDefault();
 
-      const originalLoaderHTML = loaderTarget ? loaderTarget.innerHTML : "";
-      
-      if (loaderTarget) {
-        loaderTarget.innerHTML = \`${loading.html}\`;
+    const targetSelector = "${target}";
+    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
+
+    if (loadingEl) loadingEl.style.display = "";
+
+    try {
+      const data = {};
+
+      if (el.tagName === "FORM") {
+        new FormData(el).forEach((v, k) => { data[k] = v; });
+      } else if (el.name || (el.value !== undefined && el.value !== null)) {
+        data[el.name || "value"] = el.value;
       }
 
-      try {
-        const data = {};
-        if (el.tagName === "FORM") {
-          new FormData(el).forEach((v, k) => { data[k] = v; });
-        } else if (el.name || el.value !== undefined) {
-          data[el.name || "value"] = el.value;
+      let finalUrl = "${url}";
+      Object.keys(data).forEach(key => {
+        const regex = new RegExp(":" + key, "g");
+        if (regex.test(finalUrl)) {
+          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
+          if ("${type}" === "param") delete data[key];
         }
-        
-        let finalUrl = "${url}";
-        Object.keys(data).forEach(key => {
-          const regex = new RegExp(":" + key, "g");
-          if (regex.test(finalUrl)) {
-            finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-            if ("${type}" === "param") delete data[key];
-          }
-        });
+      });
 
-        const options = { 
-          method: "${method.toUpperCase()}", 
-          headers: { "Content-Type": "application/json" } 
-        };
+      const options = {
+        method: "${method.toUpperCase()}",
+        headers: { "Content-Type": "application/json" }
+      };
 
-        if (options.method !== "GET") {
-          options.body = JSON.stringify(data);
-        }
-
-        const res = await fetch(finalUrl, options);
-        if (!res.ok) throw new Error("Server Error: " + res.status);
-        const resultData = await res.json();
-
-        const parse = (tpl, item) => {
-          return tpl.split('{').map((part, i) => {
-            if (i === 0) return part;
-            const [path, ...rest] = part.split('}');
-            const value = path.split('.').reduce((obj, key) => obj?.[key], item);
-            return (value !== undefined && value !== null ? value : "") + rest.join('}');
-          }).join('');
-        };
-
-        if ("${loading.element}" && loaderTarget) {
-            loaderTarget.innerHTML = ""; 
-        }
-
-        if (target) {
-          target.innerHTML = \`${template}\` ? parse(\`${template}\`, resultData) : "Success!";
-        }
-
-        ${onSuccess}
-      } catch (err) {
-        console.error("Action Error:", err.message);
-        if (loaderTarget) loaderTarget.innerHTML = originalLoaderHTML;
-        
-        if (target) {
-          target.innerHTML = \`<div style="color:red">\${err.message}</div>\`;
-        } else {
-          alert(\`${onError}\`);
-        }
+      if (options.method !== "GET") {
+        options.body = JSON.stringify(data);
       }
-    });
-  })();
+
+      const res = await fetch(finalUrl, options);
+      if (!res.ok) throw new Error("Server Error: " + res.status);
+
+      const resultData = await res.json();
+
+      const parse = (tpl, item) => {
+        return tpl.split("{").map((part, i) => {
+          if (i === 0) return part;
+          const [path, ...rest] = part.split("}");
+          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
+          return (value !== undefined && value !== null ? value : "") + rest.join("}");
+        }).join("");
+      };
+
+      if (targetEl && \`${template}\`.trim() !== "") {
+        targetEl.innerHTML = parse(\`${template}\`, resultData);
+      }
+
+      if (loadingEl && loadingEl !== targetEl) {
+        loadingEl.style.display = "none";
+      }
+
+      (${onSuccess})(resultData);
+
+    } catch (err) {
+      if (loadingEl && loadingEl !== targetEl) {
+        loadingEl.style.display = "none";
+      }
+
+      (${onError})({ message: err.message });
+    }
+  });
+})();
 `;
 
 // COMPONENTS 
-import * as Brutalist from "./brutalist";
-import * as Material from "./material";
-import * as Default from "./default";
+// import * as Brutalist from "./templates/brutalist";
+// import * as Material from "./templates/material";
+// import * as Default from "./templates/default";
 
 const build = async () => {
-  const glob = new Glob("**/*.fhtml");
+    const glob = new Glob("**/*.fhtml");
 
-  for await (const file of glob.scan(".")) {
-    try {
-      const content = await Bun.file(file).text();
-      const result = await eval(content);
+    for await (const file of glob.scan(".")) {
+        try {
+            const content = await Bun.file(file).text();
+            const result = await eval(content);
 
-      if (result) {
-        const outPath = file.replace(".fhtml", ".html");
-        await Bun.write(outPath, `<!DOCTYPE html>\n${result}`);
-        console.log(`✅ Compiled: ${file} -> ${outPath}`);
-      }
-    } catch (err) {
-      console.error(`❌ Error in ${file}:`, err.message);
+            if (result) {
+                const outPath = file.replace(".fhtml", ".html");
+                await Bun.write(outPath, `<!DOCTYPE html>\n${result}`);
+                console.log(`✅ Compiled: ${file} -> ${outPath}`);
+            }
+        } catch (err) {
+            console.error(`❌ Error in ${file}:`, err.message);
+        }
     }
-  }
 };
 
 await build();
 
 console.log("👀 Watching for changes...");
 watch("./", { recursive: true }, (event, filename) => {
-  if (filename?.endsWith(".fhtml")) build();
+    if (filename?.endsWith(".fhtml")) build();
 });

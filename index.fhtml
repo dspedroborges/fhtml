@@ -2,9 +2,12 @@ const createAction = action("#create-form", {
   url: "https://jsonplaceholder.typicode.com/posts",
   method: "POST",
   swap: "#post-result",
-  loading: { element: "#post-result", html: "<span>⏳ Saving...</span>" },
+  loading: ".loading",
   template: div("✅ Created ID: {id}"),
-  onSuccess: "e.target.reset()"
+  onSuccess: (r) => {
+    console.log(r);
+  },
+  onError: (r) => console.error(r.message)
 });
 
 const updateAction = action("#update-form", {
@@ -12,8 +15,10 @@ const updateAction = action("#update-form", {
   method: "PUT",
   type: "param",
   swap: ".update-status",
-  loading: { element: ".update-status", html: "Updating..." },
-  template: div("👤 Updated: {name}")
+  loading: ".update-status",
+  template: div("👤 Updated: {name}"),
+  onSuccess: (r) => console.log(r),
+  onError: (r) => console.error(r.message)
 });
 
 const deleteAction = action("#del-btn", {
@@ -22,8 +27,10 @@ const deleteAction = action("#del-btn", {
   method: "DELETE",
   type: "param",
   swap: "#delete-log",
-  loading: { element: "#delete-log", html: "<b>Removing...</b>" },
-  template: div("🗑️ Deleted successfully!")
+  loading: "#delete-log",
+  template: div("🗑️ Deleted successfully!"),
+  onSuccess: (r) => console.log(r),
+  onError: (r) => console.error(r.message)
 });
 
 const fetchOnChange = action("#user-select", {
@@ -32,22 +39,27 @@ const fetchOnChange = action("#user-select", {
   method: "GET",
   type: "param",
   swap: "#user-card",
-  loading: { element: "#user-card", html: "<i>Searching...</i>" },
+  loading: "#user-card",
   template: div(
     h4("{name}"),
     p("Email: {email}"),
     p("City: {address.city}")
-  )
+  ),
+  onSuccess: (r) => console.log(r),
+  onError: (r) => console.error(r.message)
 });
 
 html(
-  head(
-    title("Full API Test"),
-    script({ src: "https://cdn.tailwindcss.com" })
-  ),
+head({
+    title: "Full API Test",
+    description: "Testing the new head function",
+    icon: "/favicon.png",
+    thumbnail: "/og-preview.jpg",
+    imports: ["/style.css", "/main.js"]
+}, script({ src: "https://cdn.tailwindcss.com" })),
   body(
     h1("Universal API Tester"),
-
+    div(cls("loading"), "Loading..."),
     section(
       h2("POST: Create Post"),
       form(id("create-form"),
@@ -55,7 +67,7 @@ html(
         textarea({ name: "body", placeholder: "Post content..." }),
         button("Create Post")
       ),
-      div(id("post-result"), "Waiting for action...")
+      div(id("post-result"))
     ),
 
     section(
@@ -76,7 +88,7 @@ html(
       ),
       div(id("delete-log"), "No deletions yet.")
     ),
-
+    
     section(
       h2("GET: Fetch User on Change"),
       div(
