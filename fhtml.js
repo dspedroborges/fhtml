@@ -71,65 +71,73 @@ tags.forEach(tag => {
 });
 
 // BETTER HEAD
-globalThis.head = ({ 
-    title: t, 
-    description: desc, 
-    author, 
-    thumbnail, 
-    url, 
-    icon, 
-    imports = [], 
-    ...rest 
-}) => {
-    const children = [];
+globalThis.head = (config, ...children) => {
+    const isConfig = typeof config === "object" && !config.tag && config !== null;
+    const { 
+        title: t, 
+        description: desc, 
+        author, 
+        thumbnail, 
+        url, 
+        icon, 
+        imports = [], 
+        ...rest 
+    } = isConfig ? config : {};
+
+    const headChildren = [];
+    const manualChildren = isConfig ? children : [config, ...children];
 
     if (t) {
-        children.push(title(t));
-        children.push(meta({ property: "og:title", content: t }));
-        children.push(meta({ name: "twitter:title", content: t }));
+        const titleText = typeof t === "string" ? t : ""; 
+        headChildren.push(typeof t === "string" ? title(t) : t);
+        if (titleText) {
+            headChildren.push(meta({ property: "og:title", content: titleText }));
+            headChildren.push(meta({ name: "twitter:title", content: titleText }));
+        }
     }
 
     if (desc) {
-        children.push(meta({ name: "description", content: desc }));
-        children.push(meta({ property: "og:description", content: desc }));
-        children.push(meta({ name: "twitter:description", content: desc }));
+        headChildren.push(meta({ name: "description", content: desc }));
+        headChildren.push(meta({ property: "og:description", content: desc }));
+        headChildren.push(meta({ name: "twitter:description", content: desc }));
     }
 
-    if (author) {
-        children.push(meta({ name: "author", content: author }));
-    }
+    if (author) headChildren.push(meta({ name: "author", content: author }));
 
     if (thumbnail) {
-        children.push(meta({ property: "og:image", content: thumbnail }));
-        children.push(meta({ name: "twitter:image", content: thumbnail }));
-        children.push(meta({ name: "twitter:card", content: "summary_large_image" }));
+        headChildren.push(meta({ property: "og:image", content: thumbnail }));
+        headChildren.push(meta({ name: "twitter:image", content: thumbnail }));
+        headChildren.push(meta({ name: "twitter:card", content: "summary_large_image" }));
     }
 
     if (url) {
-        children.push(meta({ property: "og:url", content: url }));
-        children.push(link({ rel: "canonical", href: url }));
+        headChildren.push(meta({ property: "og:url", content: url }));
+        headChildren.push(link({ rel: "canonical", href: url }));
     }
 
     if (icon) {
-        const ext = icon.split('.').pop();
+        const ext = icon.split('.').pop().split('?')[0];
         const type = ext === 'svg' ? 'image/svg+xml' : `image/${ext}`;
-        children.push(link({ rel: "icon", type, href: icon }));
+        headChildren.push(link({ rel: "icon", type, href: icon }));
     }
 
     imports.forEach(path => {
-        const ext = path.split('?')[0].split('.').pop();
-        if (ext === "css") {
-            children.push(link({ rel: "stylesheet", href: path }));
-        } else if (ext === "js" || ext === "mjs") {
-            children.push(script({ src: path, defer: true }));
+        const cleanPath = path.split('?')[0].toLowerCase();
+        const isCSS = cleanPath.endsWith(".css") || path.includes("(css)");
+        const isJS = cleanPath.endsWith(".js") || cleanPath.endsWith(".mjs") || path.includes("(js)");
+
+        if (isCSS) {
+            headChildren.push(link({ rel: "stylesheet", href: path.replace("(css)", "") }));
+        } else if (isJS) {
+            headChildren.push(script({ src: path.replace("(js)", ""), defer: true }));
         }
     });
 
     Object.entries(rest).forEach(([name, content]) => {
-        children.push(meta({ name, content }));
+        if (name !== "children") headChildren.push(meta({ name, content }));
     });
 
-    return _head(...children);
+    return _head(...headChildren, ...manualChildren);
 };
 
 // GENERAL ATTR HELPERS

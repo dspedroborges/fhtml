@@ -55,8 +55,8 @@ head({
     description: "Testing the new head function",
     icon: "/favicon.png",
     thumbnail: "/og-preview.jpg",
-    imports: ["/style.css", "/main.js"]
-}, script({ src: "https://cdn.tailwindcss.com" })),
+    imports: ["https://cdn.tailwindcss.com(js)"]
+}),
   body(
     h1("Universal API Tester"),
     div(cls("loading"), "Loading..."),
