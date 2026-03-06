@@ -37,18 +37,32 @@ This watches all `.fhtml` files and compiles them to HTML on change.
 
 ```javascript
 // Attributes
-id("my-id")           // { id: "my-id" }
-cls("btn", "large")  // { class: "btn large" }
-css({ color: "red" }) // { style: "color:red" }
-name("username")      // { name: "username" }
-click("alert('hi')")  // { onclick: "alert('hi')" }
+id("my-id")              // { id: "my-id" }
+cls("btn", "large")     // { class: "btn large" }
+css({ color: "red" })   // { style: "color:red" }
+name("username")        // { name: "username" }
+click("alert('hi')")    // { onclick: "alert('hi')" }
+
+// Better <head> meta tags
+_head({
+  title: "My Page",
+  description: "A cool page",
+  author: "John Doe",
+  thumbnail: "https://example.com/image.png",
+  url: "https://example.com",
+  icon: "/favicon.svg",
+  imports: ["styles.css", "app.js"]
+})
 
 // Intersection Observer - adds class when element enters viewport
 observe(".fade-in", "visible", { once: true })
 
 // Fetch data from APIs with auto-refresh polling
 fetch("https://api.example.com/users", ".user-list", template, { 
-  refetchInterval: 5000  // poll every 5 seconds
+  loading: "Loading...",
+  onSuccess: "console.log('loaded')",
+  onError: "Error loading data.",
+  refetchInterval: 5000
 })
 
 // Form actions with swap support
@@ -56,48 +70,19 @@ action("#my-form", {
   on: "submit",               // event to listen to (default: "submit")
   url: "/api/users/:id",     // :id gets replaced with form value
   method: "POST",
-  type: "param",             // "json" (default) or "param" - removes replaced keys from body
-  swap: ".result-container", // where to display response
-  loading: {                 // loading state configuration
-    element: ".result-container",
-    html: "Saving..."
-  },
-  onSuccess: "e.target.reset()",
-  onError: "Something went wrong.",
+  type: "json",               // "json" (default) or "param" - removes replaced keys from body
+  target: ".result-container", // where to display response
+  loading: ".loading-el",    // selector for loading element
+  onSuccess: "(data) => console.log(data)",
+  onError: "(err) => console.error(err)",
   template: div("Created: {name}")
 })
-```
-
-## Components
-
-Three template libraries are included:
-
-- **default.js** - Modern, rounded aesthetic with Tailwind
-- **brutalist.js** - Hard edges, borders, stark contrast
-- **material.js** - Material Design inspired components
-
-Import and use them in your `.fhtml` files:
-
-```javascript
-import { Button, Card, Navbar } from "./templates/brutalist"
-
-html(
-  body(
-    Navbar({ brand: "My App", links: [...] }),
-    Card({ title: "Hello", body: "World" }),
-    Button({ label: "Click me", variant: "primary" })
-  )
-)
 ```
 
 ## Project Structure
 
 ```
 fhtml.js              # Build script (runs with Bun)
-templates/
-  default.js          # Default component library
-  brutalist.js        # Brutalist component library
-  material.js         # Material Design component library
 *.fhtml               # Your source files
 *.html                # Compiled output
 ```

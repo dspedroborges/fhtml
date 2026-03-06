@@ -56,7 +56,7 @@ function el(tag, props = {}, ...children) {
     return `${openTag}${flatChildren}</${tag}>`;
 }
 
-const tags = ["html", "_head", "title", "base", "link", "meta", "style", "script", "noscript", "body", "section", "nav", "article", "aside", "h1", "h2", "h3", "h4", "h5", "h6", "header", "footer", "address", "main", "p", "hr", "pre", "blockquote", "ol", "ul", "li", "dl", "dt", "dd", "figure", "figcaption", "div", "a", "em", "strong", "small", "s", "cite", "q", "dfn", "abbr", "ruby", "rt", "rp", "data", "time", "code", "var", "samp", "kbd", "sub", "sup", "i", "b", "u", "mark", "bdi", "bdo", "span", "br", "wbr", "ins", "del", "picture", "source", "img", "iframe", "embed", "object", "param", "video", "audio", "track", "map", "area", "table", "caption", "colgroup", "col", "tbody", "thead", "tfoot", "tr", "td", "th", "form", "label", "input", "button", "select", "datalist", "optgroup", "option", "textarea", "output", "progress", "meter", "fieldset", "legend", "details", "summary", "dialog", "canvas", "svg", "slot", "template"];
+const tags = ["html", "head", "title", "base", "link", "meta", "style", "script", "noscript", "body", "section", "nav", "article", "aside", "h1", "h2", "h3", "h4", "h5", "h6", "header", "footer", "address", "main", "p", "hr", "pre", "blockquote", "ol", "ul", "li", "dl", "dt", "dd", "figure", "figcaption", "div", "a", "em", "strong", "small", "s", "cite", "q", "dfn", "abbr", "ruby", "rt", "rp", "data", "time", "code", "var", "samp", "kbd", "sub", "sup", "i", "b", "u", "mark", "bdi", "bdo", "span", "br", "wbr", "ins", "del", "picture", "source", "img", "iframe", "embed", "object", "param", "video", "audio", "track", "map", "area", "table", "caption", "colgroup", "col", "tbody", "thead", "tfoot", "tr", "td", "th", "form", "label", "input", "button", "select", "datalist", "optgroup", "option", "textarea", "output", "progress", "meter", "fieldset", "legend", "details", "summary", "dialog", "canvas", "svg", "slot", "template"];
 
 tags.forEach(tag => {
     globalThis[tag] = (...args) => {
@@ -71,7 +71,7 @@ tags.forEach(tag => {
 });
 
 // BETTER HEAD
-globalThis.head = (config, ...children) => {
+globalThis._head = (config, ...children) => {
     const isConfig = typeof config === "object" && !config.tag && config !== null;
     const { 
         title: t, 
@@ -137,7 +137,7 @@ globalThis.head = (config, ...children) => {
         if (name !== "children") headChildren.push(meta({ name, content }));
     });
 
-    return _head(...headChildren, ...manualChildren);
+    return head(...headChildren, ...manualChildren);
 };
 
 // GENERAL ATTR HELPERS

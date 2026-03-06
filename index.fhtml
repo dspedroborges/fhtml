@@ -1,7 +1,7 @@
 const createAction = action("#create-form", {
   url: "https://jsonplaceholder.typicode.com/posts",
   method: "POST",
-  swap: "#post-result",
+  target: "#post-result",
   loading: ".loading",
   template: div("✅ Created ID: {id}"),
   onSuccess: (r) => {
@@ -14,8 +14,8 @@ const updateAction = action("#update-form", {
   url: "https://jsonplaceholder.typicode.com/users/:id",
   method: "PUT",
   type: "param",
-  swap: ".update-status",
-  loading: ".update-status",
+  target: ".update-status",
+  loading: ".loading",
   template: div("👤 Updated: {name}"),
   onSuccess: (r) => console.log(r),
   onError: (r) => console.error(r.message)
@@ -26,8 +26,8 @@ const deleteAction = action("#del-btn", {
   url: "https://jsonplaceholder.typicode.com/posts/:id",
   method: "DELETE",
   type: "param",
-  swap: "#delete-log",
-  loading: "#delete-log",
+  target: "#delete-log",
+  loading: ".loading",
   template: div("🗑️ Deleted successfully!"),
   onSuccess: (r) => console.log(r),
   onError: (r) => console.error(r.message)
@@ -38,8 +38,8 @@ const fetchOnChange = action("#user-select", {
   url: "https://jsonplaceholder.typicode.com/users/:id",
   method: "GET",
   type: "param",
-  swap: "#user-card",
-  loading: "#user-card",
+  target: "#user-card",
+  loading: ".loading",
   template: div(
     h4("{name}"),
     p("Email: {email}"),
@@ -50,7 +50,7 @@ const fetchOnChange = action("#user-select", {
 });
 
 html(
-head({
+_head({
     title: "Full API Test",
     description: "Testing the new head function",
     icon: "/favicon.png",

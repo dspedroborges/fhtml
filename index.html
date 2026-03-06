@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><title>Full API Test</title><script src="https://cdn.tailwindcss.com"></script></head><body><h1>Universal API Tester</h1><div class="loading">Loading...</div><section><h2>POST: Create Post</h2><form id="create-form"><input name="title" placeholder="Post Title"><textarea name="body" placeholder="Post content..."></textarea><button>Create Post</button></form><div id="post-result"></div></section><section><h2>PUT: Update User</h2><form id="update-form"><input name="id" placeholder="User ID to update"><input name="name" placeholder="New Name"><button>Update Name</button><div class="update-status">Waiting for action...</div></form></section><section><h2>DELETE: Remove Post</h2><div><input id="del-id" name="id" placeholder="Post ID"><button id="del-btn" style="background: red">Delete Now</button></div><div id="delete-log">No deletions yet.</div></section><section><h2>GET: Fetch User on Change</h2><div><label>Select User ID: </label><input id="user-select" name="id" type="number" value="1"></div><div id="user-card">Change the number to fetch...</div></section><script>
+<html><head><title>Full API Test</title><meta property="og:title" content="Full API Test"><meta name="twitter:title" content="Full API Test"><meta name="description" content="Testing the new head function"><meta property="og:description" content="Testing the new head function"><meta name="twitter:description" content="Testing the new head function"><meta property="og:image" content="/og-preview.jpg"><meta name="twitter:image" content="/og-preview.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="icon" type="image/png" href="/favicon.png"><script src="https://cdn.tailwindcss.com" defer></script></head><body><h1>Universal API Tester</h1><div class="loading">Loading...</div><section><h2>POST: Create Post</h2><form id="create-form"><input name="title" placeholder="Post Title"><textarea name="body" placeholder="Post content..."></textarea><button>Create Post</button></form><div id="post-result"></div></section><section><h2>PUT: Update User</h2><form id="update-form"><input name="id" placeholder="User ID to update"><input name="name" placeholder="New Name"><button>Update Name</button><div class="update-status">Waiting for action...</div></form></section><section><h2>DELETE: Remove Post</h2><div><input id="del-id" name="id" placeholder="Post ID"><button id="del-btn" style="background: red">Delete Now</button></div><div id="delete-log">No deletions yet.</div></section><section><h2>GET: Fetch User on Change</h2><div><label>Select User ID: </label><input id="user-select" name="id" type="number" value="1"></div><div id="user-card">Change the number to fetch...</div></section><script>
 (() => {
   const el = document.querySelector("#create-form");
   if (!el) return;
@@ -10,11 +10,8 @@
   el.addEventListener("submit", async (e) => {
     if ("submit" === "submit") e.preventDefault();
 
-    const swapSelector = "#post-result";
-    const target =
-      swapSelector
-        ? document.querySelector(swapSelector)
-        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+    const targetSelector = "#post-result";
+    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
 
     if (loadingEl) loadingEl.style.display = "";
 
@@ -23,7 +20,7 @@
 
       if (el.tagName === "FORM") {
         new FormData(el).forEach((v, k) => { data[k] = v; });
-      } else if (el.name || el.value !== undefined) {
+      } else if (el.name || (el.value !== undefined && el.value !== null)) {
         data[el.name || "value"] = el.value;
       }
 
@@ -59,11 +56,11 @@
         }).join("");
       };
 
-      if (target && `<div>✅ Created ID: {id}</div>`) {
-        target.innerHTML = parse(`<div>✅ Created ID: {id}</div>`, resultData);
+      if (targetEl && `<div>✅ Created ID: {id}</div>`.trim() !== "") {
+        targetEl.innerHTML = parse(`<div>✅ Created ID: {id}</div>`, resultData);
       }
 
-      if (loadingEl && loadingEl !== target) {
+      if (loadingEl && loadingEl !== targetEl) {
         loadingEl.style.display = "none";
       }
 
@@ -72,7 +69,7 @@
   })(resultData);
 
     } catch (err) {
-      if (loadingEl && loadingEl !== target) {
+      if (loadingEl && loadingEl !== targetEl) {
         loadingEl.style.display = "none";
       }
 
@@ -85,17 +82,14 @@
   const el = document.querySelector("#update-form");
   if (!el) return;
 
-  const loadingEl = ".update-status" ? document.querySelector(".update-status") : null;
+  const loadingEl = ".loading" ? document.querySelector(".loading") : null;
   if (loadingEl) loadingEl.style.display = "none";
 
   el.addEventListener("submit", async (e) => {
     if ("submit" === "submit") e.preventDefault();
 
-    const swapSelector = ".update-status";
-    const target =
-      swapSelector
-        ? document.querySelector(swapSelector)
-        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+    const targetSelector = ".update-status";
+    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
 
     if (loadingEl) loadingEl.style.display = "";
 
@@ -104,7 +98,7 @@
 
       if (el.tagName === "FORM") {
         new FormData(el).forEach((v, k) => { data[k] = v; });
-      } else if (el.name || el.value !== undefined) {
+      } else if (el.name || (el.value !== undefined && el.value !== null)) {
         data[el.name || "value"] = el.value;
       }
 
@@ -140,18 +134,18 @@
         }).join("");
       };
 
-      if (target && `<div>👤 Updated: {name}</div>`) {
-        target.innerHTML = parse(`<div>👤 Updated: {name}</div>`, resultData);
+      if (targetEl && `<div>👤 Updated: {name}</div>`.trim() !== "") {
+        targetEl.innerHTML = parse(`<div>👤 Updated: {name}</div>`, resultData);
       }
 
-      if (loadingEl && loadingEl !== target) {
+      if (loadingEl && loadingEl !== targetEl) {
         loadingEl.style.display = "none";
       }
 
       ((r) => console.log(r))(resultData);
 
     } catch (err) {
-      if (loadingEl && loadingEl !== target) {
+      if (loadingEl && loadingEl !== targetEl) {
         loadingEl.style.display = "none";
       }
 
@@ -164,17 +158,14 @@
   const el = document.querySelector("#del-btn");
   if (!el) return;
 
-  const loadingEl = "#delete-log" ? document.querySelector("#delete-log") : null;
+  const loadingEl = ".loading" ? document.querySelector(".loading") : null;
   if (loadingEl) loadingEl.style.display = "none";
 
   el.addEventListener("click", async (e) => {
     if ("click" === "submit") e.preventDefault();
 
-    const swapSelector = "#delete-log";
-    const target =
-      swapSelector
-        ? document.querySelector(swapSelector)
-        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+    const targetSelector = "#delete-log";
+    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
 
     if (loadingEl) loadingEl.style.display = "";
 
@@ -183,7 +174,7 @@
 
       if (el.tagName === "FORM") {
         new FormData(el).forEach((v, k) => { data[k] = v; });
-      } else if (el.name || el.value !== undefined) {
+      } else if (el.name || (el.value !== undefined && el.value !== null)) {
         data[el.name || "value"] = el.value;
       }
 
@@ -219,18 +210,18 @@
         }).join("");
       };
 
-      if (target && `<div>🗑️ Deleted successfully!</div>`) {
-        target.innerHTML = parse(`<div>🗑️ Deleted successfully!</div>`, resultData);
+      if (targetEl && `<div>🗑️ Deleted successfully!</div>`.trim() !== "") {
+        targetEl.innerHTML = parse(`<div>🗑️ Deleted successfully!</div>`, resultData);
       }
 
-      if (loadingEl && loadingEl !== target) {
+      if (loadingEl && loadingEl !== targetEl) {
         loadingEl.style.display = "none";
       }
 
       ((r) => console.log(r))(resultData);
 
     } catch (err) {
-      if (loadingEl && loadingEl !== target) {
+      if (loadingEl && loadingEl !== targetEl) {
         loadingEl.style.display = "none";
       }
 
@@ -243,17 +234,14 @@
   const el = document.querySelector("#user-select");
   if (!el) return;
 
-  const loadingEl = "#user-card" ? document.querySelector("#user-card") : null;
+  const loadingEl = ".loading" ? document.querySelector(".loading") : null;
   if (loadingEl) loadingEl.style.display = "none";
 
   el.addEventListener("change", async (e) => {
     if ("change" === "submit") e.preventDefault();
 
-    const swapSelector = "#user-card";
-    const target =
-      swapSelector
-        ? document.querySelector(swapSelector)
-        : (el.querySelector("[data-result]") || el.querySelector(".result") || el);
+    const targetSelector = "#user-card";
+    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
 
     if (loadingEl) loadingEl.style.display = "";
 
@@ -262,7 +250,7 @@
 
       if (el.tagName === "FORM") {
         new FormData(el).forEach((v, k) => { data[k] = v; });
-      } else if (el.name || el.value !== undefined) {
+      } else if (el.name || (el.value !== undefined && el.value !== null)) {
         data[el.name || "value"] = el.value;
       }
 
@@ -298,18 +286,18 @@
         }).join("");
       };
 
-      if (target && `<div><h4>{name}</h4><p>Email: {email}</p><p>City: {address.city}</p></div>`) {
-        target.innerHTML = parse(`<div><h4>{name}</h4><p>Email: {email}</p><p>City: {address.city}</p></div>`, resultData);
+      if (targetEl && `<div><h4>{name}</h4><p>Email: {email}</p><p>City: {address.city}</p></div>`.trim() !== "") {
+        targetEl.innerHTML = parse(`<div><h4>{name}</h4><p>Email: {email}</p><p>City: {address.city}</p></div>`, resultData);
       }
 
-      if (loadingEl && loadingEl !== target) {
+      if (loadingEl && loadingEl !== targetEl) {
         loadingEl.style.display = "none";
       }
 
       ((r) => console.log(r))(resultData);
 
     } catch (err) {
-      if (loadingEl && loadingEl !== target) {
+      if (loadingEl && loadingEl !== targetEl) {
         loadingEl.style.display = "none";
       }
 
