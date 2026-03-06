@@ -118,31 +118,50 @@ function createSmartHead(config, ...manualChildren) {
     return el("head", {}, ...headChildren, ...manualChildren);
 }
 
+const parseFunction = () => `const parse = (tpl, data) => {
+  if (typeof data !== "object" || data === null || Array.isArray(data)) {
+    return tpl;
+  }
+
+  const resolve = (obj, path) => {
+    return path
+      .replace(/\\[(\\w+)\\]/g, ".$1")
+      .split(".")
+      .reduce((acc, key) => {
+        if (acc == null || typeof acc !== "object") return "";
+        return acc[key];
+      }, obj);
+  };
+
+  return tpl.replace(/\\{([^}]+)\\}/g, (_, expr) => {
+    const value = resolve(data, expr.trim());
+    return value == null || typeof value === "object" ? "" : value;
+  });
+};`;
 
 export const fetchInit = () => {
   return `
   window.fetchData = (config = {}) => {
     const {
       url,
-      target,
-      template = "",
+      targets = [],
+      templates = [],
+      dataKeys = [],
       loading = "",
       onSuccess = (data) => {},
       onError = (err) => console.error(err),
       refetchInterval = 0
     } = config;
 
-    const targetEl = document.querySelector(target);
+    const targetEls = targets.map(t => document.querySelector(t));
     const loadingEl = loading ? document.querySelector(loading) : null;
-    if (!targetEl) return;
 
-    const parse = (tpl, item) => {
-      return tpl.split("{").map((part, i) => {
-        if (i === 0) return part;
-        const [path, ...rest] = part.split("}");
-        const value = path.split(".").reduce((obj, key) => obj?.[key], item);
-        return (value !== undefined && value !== null ? value : "") + rest.join("}");
-      }).join("");
+    const resolvePath = (obj, path) => {
+      if (!path) return obj;
+      return path
+        .replace(/\\[(\\w+)\\]/g, ".$1")
+        .split(".")
+        .reduce((acc, key) => acc?.[key], obj);
     };
 
     const doFetch = async () => {
@@ -156,14 +175,23 @@ export const fetchInit = () => {
 
         if (loadingEl) loadingEl.style.display = "none";
 
-        const items = Array.isArray(data) ? data : [data];
-        const html = items.map(item => parse(template, item)).join("");
-        targetEl.innerHTML = html;
+        targets.forEach((_, i) => {
+          const targetEl = targetEls[i];
+          const template = templates[i];
+          const key = dataKeys[i];
+
+          if (!targetEl || !template) return;
+
+          const content = resolvePath(data, key);
+          const items = Array.isArray(content) ? content : [content];
+
+          const html = items.map(item => parse(template, item)).join("");
+          targetEl.innerHTML = html;
+        });
 
         onSuccess(data);
       } catch (e) {
         if (loadingEl) loadingEl.style.display = "none";
-        targetEl.innerHTML = "Error";
         onError(e);
       } finally {
         if (refetchInterval > 0) setTimeout(doFetch, refetchInterval);
@@ -182,9 +210,10 @@ export const actionInit = () => {
       on = "submit",
       url,
       method = "POST",
-      target = "",
+      targets = [],
+      templates = [],
+      dataKeys = [],
       loading = "",
-      template = "",
       onSuccess = (data) => {},
       onError = (err) => {}
     } = config;
@@ -192,11 +221,19 @@ export const actionInit = () => {
     const el = document.querySelector(selector);
     if (!el) return;
 
+    const targetEls = targets.map(t => document.querySelector(t));
+    const loadingEl = loading ? document.querySelector(loading) : null;
+
+    const resolvePath = (obj, path) => {
+      if (!path) return obj;
+      return path
+        .replace(/\\[(\\w+)\\]/g, ".$1")
+        .split(".")
+        .reduce((acc, key) => acc?.[key], obj);
+    };
+
     el.addEventListener(on, async (e) => {
       if (on === "submit") e.preventDefault();
-
-      const targetEl = target ? document.querySelector(target) : null;
-      const loadingEl = loading ? document.querySelector(loading) : null;
 
       if (loadingEl) loadingEl.style.display = "";
 
@@ -239,18 +276,19 @@ export const actionInit = () => {
 
         if (loadingEl) loadingEl.style.display = "none";
 
-        if (targetEl && template) {
-          const parse = (tpl, item) => {
-            return tpl.split("{").map((part, i) => {
-              if (i === 0) return part;
-              const [path, ...rest] = part.split("}");
-              const val = path.split(".").reduce((obj, k) => obj?.[k], item);
-              return (val !== undefined && val !== null ? val : "") + rest.join("}");
-            }).join("");
-          };
+        targets.forEach((_, i) => {
+          const targetEl = targetEls[i];
+          const template = templates[i];
+          const key = dataKeys[i];
 
-          targetEl.innerHTML = parse(template, result);
-        }
+          if (!targetEl || !template) return;
+
+          const content = resolvePath(result, key);
+          const items = Array.isArray(content) ? content : [content];
+
+          const html = items.map(item => parse(template, item)).join("");
+          targetEl.innerHTML = html;
+        });
 
         onSuccess(result);
       } catch (err) {
@@ -273,8 +311,9 @@ export const action = (selector, config = {}) => {
 export const render = async ({ filename }, content) => {
   const inits = `
   <script>
-  ${fetchInit()}
-  ${actionInit()}
+    ${parseFunction()}
+    ${fetchInit()}
+    ${actionInit()}
   </script>
   `;
 

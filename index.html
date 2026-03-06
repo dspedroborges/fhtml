@@ -1,28 +1,47 @@
 <html><body>
   <script>
-  
+    const parse = (tpl, data) => {
+  if (typeof data !== "object" || data === null || Array.isArray(data)) {
+    return tpl;
+  }
+
+  const resolve = (obj, path) => {
+    return path
+      .replace(/\[(\w+)\]/g, ".$1")
+      .split(".")
+      .reduce((acc, key) => {
+        if (acc == null || typeof acc !== "object") return "";
+        return acc[key];
+      }, obj);
+  };
+
+  return tpl.replace(/\{([^}]+)\}/g, (_, expr) => {
+    const value = resolve(data, expr.trim());
+    return value == null || typeof value === "object" ? "" : value;
+  });
+};
+    
   window.fetchData = (config = {}) => {
     const {
       url,
-      target,
-      template = "",
+      targets = [],
+      templates = [],
+      dataKeys = [],
       loading = "",
       onSuccess = (data) => {},
       onError = (err) => console.error(err),
       refetchInterval = 0
     } = config;
 
-    const targetEl = document.querySelector(target);
+    const targetEls = targets.map(t => document.querySelector(t));
     const loadingEl = loading ? document.querySelector(loading) : null;
-    if (!targetEl) return;
 
-    const parse = (tpl, item) => {
-      return tpl.split("{").map((part, i) => {
-        if (i === 0) return part;
-        const [path, ...rest] = part.split("}");
-        const value = path.split(".").reduce((obj, key) => obj?.[key], item);
-        return (value !== undefined && value !== null ? value : "") + rest.join("}");
-      }).join("");
+    const resolvePath = (obj, path) => {
+      if (!path) return obj;
+      return path
+        .replace(/\[(\w+)\]/g, ".$1")
+        .split(".")
+        .reduce((acc, key) => acc?.[key], obj);
     };
 
     const doFetch = async () => {
@@ -36,14 +55,23 @@
 
         if (loadingEl) loadingEl.style.display = "none";
 
-        const items = Array.isArray(data) ? data : [data];
-        const html = items.map(item => parse(template, item)).join("");
-        targetEl.innerHTML = html;
+        targets.forEach((_, i) => {
+          const targetEl = targetEls[i];
+          const template = templates[i];
+          const key = dataKeys[i];
+
+          if (!targetEl || !template) return;
+
+          const content = resolvePath(data, key);
+          const items = Array.isArray(content) ? content : [content];
+
+          const html = items.map(item => parse(template, item)).join("");
+          targetEl.innerHTML = html;
+        });
 
         onSuccess(data);
       } catch (e) {
         if (loadingEl) loadingEl.style.display = "none";
-        targetEl.innerHTML = "Error";
         onError(e);
       } finally {
         if (refetchInterval > 0) setTimeout(doFetch, refetchInterval);
@@ -53,15 +81,16 @@
     doFetch();
   };
   
-  
+    
   window.action = (selector, config = {}) => {
     const {
       on = "submit",
       url,
       method = "POST",
-      target = "",
+      targets = [],
+      templates = [],
+      dataKeys = [],
       loading = "",
-      template = "",
       onSuccess = (data) => {},
       onError = (err) => {}
     } = config;
@@ -69,11 +98,19 @@
     const el = document.querySelector(selector);
     if (!el) return;
 
+    const targetEls = targets.map(t => document.querySelector(t));
+    const loadingEl = loading ? document.querySelector(loading) : null;
+
+    const resolvePath = (obj, path) => {
+      if (!path) return obj;
+      return path
+        .replace(/\[(\w+)\]/g, ".$1")
+        .split(".")
+        .reduce((acc, key) => acc?.[key], obj);
+    };
+
     el.addEventListener(on, async (e) => {
       if (on === "submit") e.preventDefault();
-
-      const targetEl = target ? document.querySelector(target) : null;
-      const loadingEl = loading ? document.querySelector(loading) : null;
 
       if (loadingEl) loadingEl.style.display = "";
 
@@ -116,18 +153,19 @@
 
         if (loadingEl) loadingEl.style.display = "none";
 
-        if (targetEl && template) {
-          const parse = (tpl, item) => {
-            return tpl.split("{").map((part, i) => {
-              if (i === 0) return part;
-              const [path, ...rest] = part.split("}");
-              const val = path.split(".").reduce((obj, k) => obj?.[k], item);
-              return (val !== undefined && val !== null ? val : "") + rest.join("}");
-            }).join("");
-          };
+        targets.forEach((_, i) => {
+          const targetEl = targetEls[i];
+          const template = templates[i];
+          const key = dataKeys[i];
 
-          targetEl.innerHTML = parse(template, result);
-        }
+          if (!targetEl || !template) return;
+
+          const content = resolvePath(result, key);
+          const items = Array.isArray(content) ? content : [content];
+
+          const html = items.map(item => parse(template, item)).join("");
+          targetEl.innerHTML = html;
+        });
 
         onSuccess(result);
       } catch (err) {
@@ -138,4 +176,4 @@
   };
   
   </script>
-  <h1>API Test</h1><div id="post-list"></div><span id="loader" style="display:none">Loading...</span><div id="user-list"></div><form id="add-user-form"><input name="title" placeholder="Post title"><button type="submit">Create Post</button></form><script>window.fetchData({"url":"https://jsonplaceholder.typicode.com/posts?_limit=5","target":"#post-list","loading":"#loader","template":"<div><strong>{title}</strong><p>{body}</p></div>"});window.action("#add-user-form", {"url":"https://jsonplaceholder.typicode.com/posts","method":"POST","target":"#user-list","template":"<div>New post created: <strong>{title}</strong></div>"});</script></body></html>
+  <h1>Rick and Morty Characters</h1><div id="character-list"></div><span id="loader" style="display:none">Loading...</span><h1>Search Character</h1><div id="search-result"></div><form id="search-form"><input name="name" placeholder="Character name (e.g. Rick)"><button type="submit">Search</button></form><script>window.fetchData({"url":"https://rickandmortyapi.com/api/character","loading":"#loader","targets":["#character-list"],"dataKeys":["results"],"templates":["<div><img src=\"{image}\" width=\"80\"><div><strong>{name}</strong><p>Status: {status}</p><p>Species: {species}</p></div></div>"]});window.action("#search-form", {"url":"https://rickandmortyapi.com/api/character/?name=:name","method":"GET","targets":["#search-result"],"dataKeys":["results"],"templates":["<div><img src=\"{image}\" width=\"120\"><div><strong>{name}</strong><p>Status: {status}</p><p>Species: {species}</p><p>Origin: {origin.name}</p></div></div>"]});</script></body></html>

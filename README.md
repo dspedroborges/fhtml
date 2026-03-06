@@ -16,13 +16,7 @@ You write:
 button({ class: "primary" }, "Click me")
 ```
 
-Or with the `cls` helper:
-
-```javascript
-button(cls("primary"), "Click me")
-```
-
-All HTML tags are available as global functions. Props go first (as an object), followed by children.
+All HTML tags are available as functions via `h`. Props go first (as an object), followed by children.
 
 ## Quick Start
 
@@ -36,15 +30,18 @@ This watches all `.fhtml` files and compiles them to HTML on change.
 ## Available Helpers
 
 ```javascript
+import { h, fetch, action, render } from "./fhtml.js";
+
+const { div, button, span, ... } = h;
+
 // Attributes
-id("my-id")              // { id: "my-id" }
-cls("btn", "large")     // { class: "btn large" }
-css({ color: "red" })   // { style: "color:red" }
-name("username")        // { name: "username" }
-click("alert('hi')")    // { onclick: "alert('hi')" }
+{ id: "my-id" }              // id attribute
+{ class: "btn large" }       // class attribute
+{ style: { color: "red" } } // style attribute (camelCase to kebab-case)
+{ name: "username" }         // name attribute
 
 // Better <head> meta tags
-_head({
+head({
   title: "My Page",
   description: "A cool page",
   author: "John Doe",
@@ -54,14 +51,14 @@ _head({
   imports: ["styles.css", "app.js"]
 })
 
-// Intersection Observer - adds class when element enters viewport
-observe(".fade-in", "visible", { once: true })
-
 // Fetch data from APIs with auto-refresh polling
-fetch("https://api.example.com/users", ".user-list", template, { 
-  loading: "Loading...",
-  onSuccess: "console.log('loaded')",
-  onError: "Error loading data.",
+fetch({
+  url: "https://api.example.com/users",
+  target: ".user-list",
+  template: div(span("{name}")),
+  loading: ".loading-el",
+  onSuccess: "(data) => console.log(data)",
+  onError: "(err) => console.error(err)",
   refetchInterval: 5000
 })
 
@@ -70,13 +67,23 @@ action("#my-form", {
   on: "submit",               // event to listen to (default: "submit")
   url: "/api/users/:id",     // :id gets replaced with form value
   method: "POST",
-  type: "json",               // "json" (default) or "param" - removes replaced keys from body
   target: ".result-container", // where to display response
   loading: ".loading-el",    // selector for loading element
   onSuccess: "(data) => console.log(data)",
   onError: "(err) => console.error(err)",
   template: div("Created: {name}")
 })
+
+// Render to file
+await render({ filename: "output.html" }, htmlContent);
+```
+
+## Template Syntax
+
+Use `{path.to.property}` in templates to interpolate data:
+
+```javascript
+template: div(span("{user.name}"), span("{user.email}"))
 ```
 
 ## Project Structure

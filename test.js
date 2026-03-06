@@ -1,32 +1,55 @@
-import { h, fetch, action, render, fetchInit, actionInit } from "./fhtml.js";
-const { html, body, div, h1, form, input, button, script, span, strong, p } = h;
+import { h, fetch, action, render } from "./fhtml.js";
+const { html, body, div, h1, form, input, button, script, span, strong, p, img } = h;
 
 const pageContent = html(
   body(
-    h1("API Test"),
-    
-    div({ id: "post-list" }),
+    h1("Rick and Morty Characters"),
+
+    div({ id: "character-list" }),
     span({ id: "loader", style: { display: "none" } }, "Loading..."),
 
+    h1("Search Character"),
 
-    div({ id: "user-list" }),
-    form({ id: "add-user-form" },
-      input({ name: "title", placeholder: "Post title" }),
-      button({ type: "submit" }, "Create Post")
+    div({ id: "search-result" }),
+    form({ id: "search-form" },
+      input({ name: "name", placeholder: "Character name (e.g. Rick)" }),
+      button({ type: "submit" }, "Search")
     ),
 
     script(
       fetch({
-        url: "https://jsonplaceholder.typicode.com/posts?_limit=5",
-        target: "#post-list",
+        url: "https://rickandmortyapi.com/api/character",
         loading: "#loader",
-        template: div(strong("{title}"), p("{body}"))
+        targets: ["#character-list"],
+        dataKeys: ["results"],
+        templates: [
+          div(
+            img({ src: "{image}", width: "80" }),
+            div(
+              strong("{name}"),
+              p("Status: {status}"),
+              p("Species: {species}")
+            )
+          )
+        ]
       }),
-      action("#add-user-form", {
-        url: "https://jsonplaceholder.typicode.com/posts",
-        method: "POST",
-        target: "#user-list",
-        template: div("New post created: ", strong("{title}"))
+
+      action("#search-form", {
+        url: "https://rickandmortyapi.com/api/character/?name=:name",
+        method: "GET",
+        targets: ["#search-result"],
+        dataKeys: ["results"],
+        templates: [
+          div(
+            img({ src: "{image}", width: "120" }),
+            div(
+              strong("{name}"),
+              p("Status: {status}"),
+              p("Species: {species}"),
+              p("Origin: {origin.name}")
+            )
+          )
+        ]
       })
     )
   )
