@@ -1,4 +1,3 @@
-(function () {
   function createModalString(options = {}) {
     const {
       title = "System Notification",
@@ -95,6 +94,3 @@
   </div>
 `;
   }
-
-  window.createModalString = createModalString;
-})();

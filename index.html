@@ -1,4 +1,4 @@
-<html><body>
+<html><head><title>Test</title><meta property="og:title" content="Test"><meta name="description" content="Test"><meta property="og:description" content="Test"><script src="./utils/libs/toast.js" defer></script><script src="./utils/libs/dnd.js" defer></script><script src="./utils/libs/aos.js" defer></script><script src="./utils/libs/chart.js" defer></script><script src="./utils/libs/dnd.js" defer></script><script src="./utils/libs/tooltip.js" defer></script><script src="./utils/libs/carousel.js" defer></script></head><body>
   <script>
     const parse = (tpl, data) => {
   if (typeof data !== "object" || data === null || Array.isArray(data)) {
@@ -26,7 +26,7 @@
       url,
       targets = [],
       templates = [],
-      dataKeys = [],
+      keys = [],
       loading = "",
       onSuccess = (data) => {},
       onError = (err) => console.error(err),
@@ -58,7 +58,7 @@
         targets.forEach((_, i) => {
           const targetEl = targetEls[i];
           const template = templates[i];
-          const key = dataKeys[i];
+          const key = keys[i];
 
           if (!targetEl || !template) return;
 
@@ -89,7 +89,7 @@
       method = "POST",
       targets = [],
       templates = [],
-      dataKeys = [],
+      keys = [],
       loading = "",
       onSuccess = (data) => {},
       onError = (err) => {}
@@ -156,7 +156,7 @@
         targets.forEach((_, i) => {
           const targetEl = targetEls[i];
           const template = templates[i];
-          const key = dataKeys[i];
+          const key = keys[i];
 
           if (!targetEl || !template) return;
 
@@ -176,4 +176,130 @@
   };
   
   </script>
-  <h1>Rick and Morty Characters</h1><div id="character-list"></div><span id="loader" style="display:none">Loading...</span><h1>Search Character</h1><div id="search-result"></div><form id="search-form"><input name="name" placeholder="Character name (e.g. Rick)"><button type="submit">Search</button></form><script>window.fetchData({"url":"https://rickandmortyapi.com/api/character","loading":"#loader","targets":["#character-list"],"dataKeys":["results"],"templates":["<div><img src=\"{image}\" width=\"80\"><div><strong>{name}</strong><p>Status: {status}</p><p>Species: {species}</p></div></div>"]});window.action("#search-form", {"url":"https://rickandmortyapi.com/api/character/?name=:name","method":"GET","targets":["#search-result"],"dataKeys":["results"],"templates":["<div><img src=\"{image}\" width=\"120\"><div><strong>{name}</strong><p>Status: {status}</p><p>Species: {species}</p><p>Origin: {origin.name}</p></div></div>"]});</script></body></html>
+  <h1>Rick and Morty Characters</h1><svg viewBox="0 0 700 500" width="100%" height="auto" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg"><path d="M 350 250 L 492.8571428571429 250 A 142.85714285714286 142.85714285714286 0 0 1 207.14285714285714 250.00000000000003 Z" fill="hsl(0,65%,58%)"/>
+          <line x1="350" y1="392.8571428571429" x2="350" y2="432.8571428571429" stroke="#666"/>
+          <text x="355" y="432.8571428571429" font-size="11" text-anchor="start">A (50.0%)</text>
+        <path d="M 350 250 L 207.14285714285714 250.00000000000003 A 142.85714285714286 142.85714285714286 0 0 1 305.8547150892932 114.13478338640664 Z" fill="hsl(120,65%,58%)"/>
+          <line x1="234.42614366072178" y1="166.0306782439324" x2="202.06546388572386" y2="142.5192681522335" stroke="#666"/>
+          <text x="197.06546388572386" y="142.5192681522335" font-size="11" text-anchor="end">B (20.0%)</text>
+        <path d="M 350 250 L 305.8547150892932 114.13478338640664 A 142.85714285714286 142.85714285714286 0 0 1 492.8571428571429 249.99999999999997 Z" fill="hsl(240,65%,58%)"/>
+          <line x1="433.96932175606753" y1="134.42614366072178" x2="457.4807318477665" y2="102.06546388572386" stroke="#666"/>
+          <text x="462.4807318477665" y="102.06546388572386" font-size="11" text-anchor="start">C (30.0%)</text>
+        </svg><svg viewBox="0 0 1000 400" width="100%" height="auto" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">
+      <line x1="50" y1="350" x2="950" y2="350" stroke="black"/>
+      <line x1="50" y1="50" x2="50" y2="350" stroke="black"/>
+    
+        <line x1="45" y1="350" x2="50" y2="350" stroke="black"/>
+        <line x1="50" y1="350" x2="950" y2="350" stroke="#ddd"/>
+        <text x="42" y="354" font-size="12" text-anchor="end">0</text>
+      
+        <line x1="45" y1="290" x2="50" y2="290" stroke="black"/>
+        <line x1="50" y1="290" x2="950" y2="290" stroke="#ddd"/>
+        <text x="42" y="294" font-size="12" text-anchor="end">11</text>
+      
+        <line x1="45" y1="230" x2="50" y2="230" stroke="black"/>
+        <line x1="50" y1="230" x2="950" y2="230" stroke="#ddd"/>
+        <text x="42" y="234" font-size="12" text-anchor="end">22</text>
+      
+        <line x1="45" y1="169.99999999999997" x2="50" y2="169.99999999999997" stroke="black"/>
+        <line x1="50" y1="169.99999999999997" x2="950" y2="169.99999999999997" stroke="#ddd"/>
+        <text x="42" y="173.99999999999997" font-size="12" text-anchor="end">32</text>
+      
+        <line x1="45" y1="110" x2="50" y2="110" stroke="black"/>
+        <line x1="50" y1="110" x2="950" y2="110" stroke="#ddd"/>
+        <text x="42" y="114" font-size="12" text-anchor="end">43</text>
+      
+        <line x1="45" y1="50" x2="50" y2="50" stroke="black"/>
+        <line x1="50" y1="50" x2="950" y2="50" stroke="#ddd"/>
+        <text x="42" y="54" font-size="12" text-anchor="end">54</text>
+      <text x="50" y="368" font-size="11" text-anchor="middle">A</text><text x="150" y="368" font-size="11" text-anchor="middle">C</text><text x="250" y="368" font-size="11" text-anchor="middle">E</text><text x="350" y="368" font-size="11" text-anchor="middle">G</text><text x="450" y="368" font-size="11" text-anchor="middle">I</text><text x="550" y="368" font-size="11" text-anchor="middle">K</text><text x="650" y="368" font-size="11" text-anchor="middle">M</text><text x="750" y="368" font-size="11" text-anchor="middle">O</text><text x="850" y="368" font-size="11" text-anchor="middle">Q</text><text x="950" y="368" font-size="11" text-anchor="middle">S</text><circle cx="50" cy="72.22222222222223" r="3" fill="steelblue"/><circle cx="100" cy="238.8888888888889" r="3" fill="steelblue"/><circle cx="150" cy="183.33333333333331" r="3" fill="steelblue"/><circle cx="200" cy="233.33333333333331" r="3" fill="steelblue"/><circle cx="250" cy="222.22222222222223" r="3" fill="steelblue"/><circle cx="300" cy="111.11111111111111" r="3" fill="steelblue"/><circle cx="350" cy="50" r="3" fill="steelblue"/><circle cx="400" cy="322.22222222222223" r="3" fill="steelblue"/><circle cx="450" cy="322.22222222222223" r="3" fill="steelblue"/><circle cx="500" cy="338.8888888888889" r="3" fill="steelblue"/><circle cx="550" cy="333.3333333333333" r="3" fill="steelblue"/><circle cx="600" cy="327.77777777777777" r="3" fill="steelblue"/><circle cx="650" cy="344.44444444444446" r="3" fill="steelblue"/><circle cx="700" cy="338.8888888888889" r="3" fill="steelblue"/><circle cx="750" cy="333.3333333333333" r="3" fill="steelblue"/><circle cx="800" cy="327.77777777777777" r="3" fill="steelblue"/><circle cx="850" cy="322.22222222222223" r="3" fill="steelblue"/><circle cx="900" cy="316.6666666666667" r="3" fill="steelblue"/><circle cx="950" cy="311.1111111111111" r="3" fill="steelblue"/><path d="M 50 72.22222222222223 L 100 238.8888888888889 L 150 183.33333333333331 L 200 233.33333333333331 L 250 222.22222222222223 L 300 111.11111111111111 L 350 50 L 400 322.22222222222223 L 450 322.22222222222223 L 500 338.8888888888889 L 550 333.3333333333333 L 600 327.77777777777777 L 650 344.44444444444446 L 700 338.8888888888889 L 750 333.3333333333333 L 800 327.77777777777777 L 850 322.22222222222223 L 900 316.6666666666667 L 950 311.1111111111111" fill="none" stroke="steelblue" stroke-width="2"/></svg><svg viewBox="0 0 860 400" width="100%" height="auto" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">
+      <line x1="50" y1="350" x2="810" y2="350" stroke="black"/>
+      <line x1="50" y1="50" x2="50" y2="350" stroke="black"/>
+    
+        <line x1="45" y1="350" x2="50" y2="350" stroke="black"/>
+        <text x="42" y="354" font-size="12" text-anchor="end">0</text>
+      
+        <line x1="45" y1="290" x2="50" y2="290" stroke="black"/>
+        <text x="42" y="294" font-size="12" text-anchor="end">11</text>
+      
+        <line x1="45" y1="230" x2="50" y2="230" stroke="black"/>
+        <text x="42" y="234" font-size="12" text-anchor="end">22</text>
+      
+        <line x1="45" y1="169.99999999999997" x2="50" y2="169.99999999999997" stroke="black"/>
+        <text x="42" y="173.99999999999997" font-size="12" text-anchor="end">32</text>
+      
+        <line x1="45" y1="110" x2="50" y2="110" stroke="black"/>
+        <text x="42" y="114" font-size="12" text-anchor="end">43</text>
+      
+        <line x1="45" y1="50" x2="50" y2="50" stroke="black"/>
+        <text x="42" y="54" font-size="12" text-anchor="end">54</text>
+      
+        <rect x="52" y="72.22222222222223" width="32" height="277.77777777777777" fill="steelblue"/>
+        <text x="70" y="368" font-size="11" text-anchor="middle">A</text>
+      
+        <rect x="92" y="238.8888888888889" width="32" height="111.1111111111111" fill="steelblue"/>
+        <text x="110" y="368" font-size="11" text-anchor="middle">B</text>
+      
+        <rect x="132" y="183.33333333333331" width="32" height="166.66666666666669" fill="steelblue"/>
+        <text x="150" y="368" font-size="11" text-anchor="middle">C</text>
+      
+        <rect x="172" y="233.33333333333331" width="32" height="116.66666666666667" fill="steelblue"/>
+        <text x="190" y="368" font-size="11" text-anchor="middle">D</text>
+      
+        <rect x="212" y="222.22222222222223" width="32" height="127.77777777777779" fill="steelblue"/>
+        <text x="230" y="368" font-size="11" text-anchor="middle">E</text>
+      
+        <rect x="252" y="111.11111111111111" width="32" height="238.88888888888889" fill="steelblue"/>
+        <text x="270" y="368" font-size="11" text-anchor="middle">F</text>
+      
+        <rect x="292" y="50" width="32" height="300" fill="steelblue"/>
+        <text x="310" y="368" font-size="11" text-anchor="middle">G</text>
+      
+        <rect x="332" y="322.22222222222223" width="32" height="27.777777777777775" fill="steelblue"/>
+        <text x="350" y="368" font-size="11" text-anchor="middle">H</text>
+      
+        <rect x="372" y="322.22222222222223" width="32" height="27.777777777777775" fill="steelblue"/>
+        <text x="390" y="368" font-size="11" text-anchor="middle">I</text>
+      
+        <rect x="412" y="338.8888888888889" width="32" height="11.11111111111111" fill="steelblue"/>
+        <text x="430" y="368" font-size="11" text-anchor="middle">J</text>
+      
+        <rect x="452" y="333.3333333333333" width="32" height="16.666666666666664" fill="steelblue"/>
+        <text x="470" y="368" font-size="11" text-anchor="middle">K</text>
+      
+        <rect x="492" y="327.77777777777777" width="32" height="22.22222222222222" fill="steelblue"/>
+        <text x="510" y="368" font-size="11" text-anchor="middle">L</text>
+      
+        <rect x="532" y="344.44444444444446" width="32" height="5.555555555555555" fill="steelblue"/>
+        <text x="550" y="368" font-size="11" text-anchor="middle">M</text>
+      
+        <rect x="572" y="338.8888888888889" width="32" height="11.11111111111111" fill="steelblue"/>
+        <text x="590" y="368" font-size="11" text-anchor="middle">N</text>
+      
+        <rect x="612" y="333.3333333333333" width="32" height="16.666666666666664" fill="steelblue"/>
+        <text x="630" y="368" font-size="11" text-anchor="middle">O</text>
+      
+        <rect x="652" y="327.77777777777777" width="32" height="22.22222222222222" fill="steelblue"/>
+        <text x="670" y="368" font-size="11" text-anchor="middle">P</text>
+      
+        <rect x="692" y="322.22222222222223" width="32" height="27.777777777777775" fill="steelblue"/>
+        <text x="710" y="368" font-size="11" text-anchor="middle">Q</text>
+      
+        <rect x="732" y="316.6666666666667" width="32" height="33.33333333333333" fill="steelblue"/>
+        <text x="750" y="368" font-size="11" text-anchor="middle">R</text>
+      
+        <rect x="772" y="311.1111111111111" width="32" height="38.888888888888886" fill="steelblue"/>
+        <text x="790" y="368" font-size="11" text-anchor="middle">S</text>
+      </svg><div id="myModal" role="dialog" aria-modal="true" aria-labelledby="myModal-title" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(10,10,20,0.55);backdrop-filter:blur(4px)"><div role="document" style="position:relative;width:min(520px, calc(100vw - 2rem));background:#ffffff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08);overflow:hidden"><div style="height:4px;background:linear-gradient(90deg,#6366f1,#a78bfa,#38bdf8)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem 0"><h2 id="myModal-title" style="margin:0;font-size:1.125rem;font-weight:700;color:#0f0f1a;letter-spacing:-0.01em">Hello</h2><button onclick="document.getElementById('myModal').style.display='none'" aria-label="Close modal" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;color:#6b7280;line-height:1"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4L14 14M14 4L4 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg></button></div><div id="myModal-body" style="padding:1rem 1.5rem 0;color:#374151;font-size:0.9375rem;line-height:1.65"><p style="margin:0"><div><p>Hello</p><p>hi</p><p>How are you?</p></div></p></div><div style="display:flex;justify-content:flex-end;gap:0.625rem;padding:1.25rem 1.5rem"><button onclick="document.getElementById('myModal').style.display='none'" style="padding:0.5rem 1.125rem;border-radius:8px;border:1.5px solid #e5e7eb;background:#ffffff;color:#374151;font-size:0.875rem;font-weight:500;cursor:pointer">Cancel</button><button id="myModal-confirm" style="padding:0.5rem 1.125rem;border-radius:8px;border:none;background:linear-gradient(135deg,#6366f1,#818cf8);color:#ffffff;font-size:0.875rem;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(99,102,241,0.35)">Confirm</button></div></div></div><button onclick="
+    (function(){
+      var m = document.getElementById(&quot;myModal&quot;);
+      if (!m) return;
+      document.getElementById(&quot;myModal-body&quot;).innerHTML = &quot;&lt;p&gt;What up&lt;/p&gt;&quot;;
+      m.style.display = 'flex';
+      m.querySelector('[id$=&quot;-confirm&quot;]')?.focus();
+      m.onclick = function(e){ if(e.target === m) m.style.display='none'; };
+      document.onkeydown = function(e){ if(e.key==='Escape') m.style.display='none'; };
+    })();
+  ">Show modal</button><div carousel="1;auto=3000;bullets-carets"><div style="width: 500px; height: 500px; background: tomato;"></div><div style="width: 500px; height: 500px; background: teal;"></div><div style="width: 500px; height: 500px; background: dodgerblue;"></div></div><div dnd="drag" style="width: 50px; height: 50px; background: #ccc;"></div><div dnd="drag" style="width: 50px; height: 50px; background: #ccc;"></div><div dnd="drag" style="width: 50px; height: 50px; background: #ccc;"></div><div style="display: flex; gap: 2rem;"><div dnd="drop" style="width: 200px; height: 500px; background: #eee; padding: 1rem"></div><div dnd="drop" style="width: 200px; height: 500px; background: #eee; padding: 1rem"></div><div dnd="drop" style="width: 200px; height: 500px; background: #eee; padding: 1rem"></div></div><div id="character-list" onclick="toast.success('test')"></div><span id="loader" style="display:none">Loading...</span><h1>Search Character</h1><div id="search-result"></div><form id="search-form"><input name="name" placeholder="Character name (e.g. Rick)"><button type="submit">Search</button></form><script>window.fetchData({"url":"https://rickandmortyapi.com/api/character","loading":"#loader","targets":["#character-list"],"keys":["results"],"templates":["<div><img src=\"{image}\" width=\"80\"><div><strong>{name}</strong><p>Status: {status}</p><p>Species: {species}</p></div></div>"]});window.action("#search-form", {"url":"https://rickandmortyapi.com/api/character/?name=:name","method":"GET","targets":["#search-result"],"keys":["results"],"templates":["<div><img src=\"{image}\" width=\"120\"><div><strong>{name}</strong><p>Status: {status}</p><p>Species: {species}</p><p>Origin: {origin.name}</p></div></div>"]});</script></body></html>

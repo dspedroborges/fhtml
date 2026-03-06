@@ -16,15 +16,13 @@
     const maxIdx  = () => Math.max(0, items.length - visible())
     const mkEl    = (tag, css) => { const e = document.createElement(tag); Object.assign(e.style, css); return e }
 
-    // DOM
     const track    = mkEl("div", { display:"flex", transition:"transform .3s ease" })
     const viewport = mkEl("div", { overflow:"hidden", width:"100%", position:"relative", cursor:"grab" })
-    const dotsWrap = mkEl("div", { display: showBullets ? "flex" : "none", justifyContent:"center", gap:"8px", marginTop:"12px" })
+    const dotsWrap = mkEl("div", { display: showBullets ? "flex" : "none", justifyContent:"center", gap:"8px", position:"absolute", bottom:"12px", left:"0", right:"0", zIndex:"10" })
 
     items.forEach(i => { i.style.flex = "0 0 auto"; track.appendChild(i) })
     viewport.appendChild(track)
 
-    // Carets
     const mkArrow = (d, side) => {
       const b = mkEl("button", { position:"absolute", top:"50%", transform:"translateY(-50%)", zIndex:"10",
         background:"rgba(0,0,0,.6)", color:"#fff", border:"none", width:"44px", height:"44px",
@@ -35,12 +33,11 @@
     }
     const prev = mkArrow("M15.75 19.5 8.25 12l7.5-7.5", "left")
     const next = mkArrow("m8.25 4.5 7.5 7.5-7.5 7.5",  "right")
-    viewport.append(prev, next)
+    viewport.append(prev, next, dotsWrap)
 
     Object.assign(root.style, { position:"relative", width:"100%" })
-    root.append(viewport, dotsWrap)
+    root.appendChild(viewport)
 
-    // Navigation
     function goTo(i) {
       current = i > maxIdx() ? 0 : i < 0 ? maxIdx() : i
       track.style.transition = "transform .3s ease"
@@ -64,7 +61,6 @@
 
     const startAuto = () => { if (autoDelay) { clearInterval(timer); timer = setInterval(() => goTo(current + 1), autoDelay) } }
 
-    // Drag (mouse + touch unified)
     const dragStart = x  => { clearInterval(timer); dragging = true; startX = x; deltaX = 0; track.style.transition = "none" }
     const dragMove  = x  => { if (!dragging) return; deltaX = x - startX; track.style.transform = `translateX(${-(current * 100 / visible()) + deltaX / viewport.offsetWidth * 100}%)` }
     const dragEnd   = () => { if (!dragging) return; dragging = false; goTo(current + (Math.abs(deltaX) > 50 ? (deltaX < 0 ? 1 : -1) : 0)); deltaX = 0; startAuto() }

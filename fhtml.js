@@ -1,12 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
-const voidTags = new Set([
-    "area", "base", "br", "col", "embed", "hr", "img", "input",
-    "link", "meta", "param", "source", "track", "wbr"
-]);
-
-const escape = (str) =>
+const escapeAttr = (str) =>
     String(str)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -14,10 +9,6 @@ const escape = (str) =>
         .replace(/"/g, "&quot;");
 
 function el(tag, props = {}, ...children) {
-    if (typeof tag === "function") {
-        return tag({ ...props, children });
-    }
-
     const { children: propChildren, ...attrs } = props || {};
 
     const attrString = Object.entries(attrs)
@@ -28,21 +19,16 @@ function el(tag, props = {}, ...children) {
                 const style = Object.entries(v)
                     .map(([p, val]) => `${p.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}:${val}`)
                     .join(";");
-                return `style="${escape(style)}"`;
+                return `style="${escapeAttr(style)}"`;
             }
-            return `${k}="${escape(v)}"`;
+            return `${k}="${escapeAttr(v)}"`;
         })
         .join(" ");
 
     const flatChildren = [children, propChildren]
         .flat(Infinity)
         .filter(c => c != null && c !== false)
-        .map(c => {
-            const s = String(c);
-            if (tag === "script" || tag === "style") return s;
-            if (s.startsWith("<") && s.endsWith(">")) return s;
-            return escape(s);
-        })
+        .map(c => String(c))
         .join("");
 
     const openTag = `<${tag}${attrString ? " " + attrString : ""}>`;
@@ -63,8 +49,16 @@ const tags = [
     "tbody", "thead", "tfoot", "tr", "td", "th", "form", "label",
     "input", "button", "select", "datalist", "optgroup", "option",
     "textarea", "output", "progress", "meter", "fieldset", "legend",
-    "details", "summary", "dialog", "canvas", "svg", "slot", "template"
+    "details", "summary", "dialog", "canvas", "svg", "slot", "template",
+    "text", "rect", "line", "path", "circle", "linearGradient", "radialGradient", "stop", "defs", "g", "polyline", "polygon"
 ];
+
+const voidTags = new Set([
+    "area", "base", "br", "col", "embed", "hr", "img", "input",
+    "link", "meta", "param", "source", "track", "wbr",
+    // SVG void/self-closing tags
+    "rect", "circle", "ellipse", "line"
+]);
 
 export const h = Object.fromEntries(
     tags.map(tag => [
@@ -307,6 +301,324 @@ export const fetch = (config = {}) => {
 export const action = (selector, config = {}) => {
   return `window.action(${JSON.stringify(selector)}, ${JSON.stringify(config)});`;
 };
+
+export const chart = {
+  bar({ labels = [], data = [] }) {
+    if (!labels.length || labels.length !== data.length) return "";
+
+    const minBarWidth = 40;
+    const pad = 50;
+    const height = 400;
+    const width = Math.max(600, pad * 2 + labels.length * minBarWidth);
+    const barWidth = (width - pad * 2) / data.length;
+    const maxY = Math.max(...data);
+    const scaleY = v => height - pad - (v / (maxY || 1)) * (height - pad * 2);
+
+    let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" height="auto" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">`;
+
+    svg += `
+      <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="black"/>
+      <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="black"/>
+    `;
+
+    for (let i = 0; i <= 5; i++) {
+      const val = (maxY / 5) * i;
+      const yPos = scaleY(val);
+      svg += `
+        <line x1="${pad - 5}" y1="${yPos}" x2="${pad}" y2="${yPos}" stroke="black"/>
+        <text x="${pad - 8}" y="${yPos + 4}" font-size="12" text-anchor="end">${val.toFixed(0)}</text>
+      `;
+    }
+
+    labels.forEach((label, i) => {
+      const barHeight = (data[i] / (maxY || 1)) * (height - pad * 2);
+      const yPos = height - pad - barHeight;
+      const xPos = pad + i * barWidth;
+      const truncated = label.length > 8 ? label.slice(0, 7) + "…" : label;
+
+      svg += `
+        <rect x="${xPos + 2}" y="${yPos}" width="${barWidth - 8}" height="${barHeight}" fill="steelblue"/>
+        <text x="${xPos + barWidth / 2}" y="${height - pad + 18}" font-size="11" text-anchor="middle">${truncated}</text>
+      `;
+    });
+
+    svg += `</svg>`;
+    return svg;
+  },
+
+  line({ labels = [], data = [] }) {
+    if (!labels.length || !Array.isArray(data) || !data.length) return "";
+
+    const datasets = Array.isArray(data[0]) ? data : [data];
+    const length = labels.length;
+
+    if (!datasets.every(arr => Array.isArray(arr) && arr.length === length)) return "";
+
+    const minStepX = 50;
+    const pad = 50;
+    const height = 400;
+    const width = Math.max(600, pad * 2 + (length - 1) * minStepX);
+    const flat = datasets.flat();
+    const maxY = Math.max(...flat);
+    const stepX = length > 1 ? (width - pad * 2) / (length - 1) : 0;
+    const scaleY = v => height - pad - (v / (maxY || 1)) * (height - pad * 2);
+    const colors = ["steelblue", "tomato", "seagreen", "orange", "purple", "brown"];
+
+    let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" height="auto" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">`;
+
+    svg += `
+      <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="black"/>
+      <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="black"/>
+    `;
+
+    for (let i = 0; i <= 5; i++) {
+      const val = (maxY / 5) * i;
+      const yPos = scaleY(val);
+      svg += `
+        <line x1="${pad - 5}" y1="${yPos}" x2="${pad}" y2="${yPos}" stroke="black"/>
+        <line x1="${pad}" y1="${yPos}" x2="${width - pad}" y2="${yPos}" stroke="#ddd"/>
+        <text x="${pad - 8}" y="${yPos + 4}" font-size="12" text-anchor="end">${val.toFixed(0)}</text>
+      `;
+    }
+
+    const labelStep = Math.ceil(length / Math.floor((width - pad * 2) / 50));
+    labels.forEach((label, i) => {
+      if (i % labelStep !== 0 && i !== length - 1) return;
+      const xPos = pad + i * stepX;
+      const truncated = label.length > 8 ? label.slice(0, 7) + "…" : label;
+      svg += `<text x="${xPos}" y="${height - pad + 18}" font-size="11" text-anchor="middle">${truncated}</text>`;
+    });
+
+    datasets.forEach((dataset, di) => {
+      let path = "";
+      const color = colors[di % colors.length];
+      dataset.forEach((val, i) => {
+        const xPos = pad + i * stepX;
+        const yPos = scaleY(val);
+        path += i === 0 ? `M ${xPos} ${yPos}` : ` L ${xPos} ${yPos}`;
+        svg += `<circle cx="${xPos}" cy="${yPos}" r="3" fill="${color}"/>`;
+      });
+      svg += `<path d="${path}" fill="none" stroke="${color}" stroke-width="2"/>`;
+    });
+
+    svg += `</svg>`;
+    return svg;
+  },
+
+  pie({ labels = [], data = [] }) {
+    if (!labels.length || labels.length !== data.length) return "";
+
+    const width = 700;
+    const height = 500;
+    const radius = Math.min(width, height) / 3.5;
+    const cx = width / 2;
+    const cy = height / 2;
+    const total = data.reduce((a, b) => a + b, 0);
+
+    let startAngle = 0;
+
+    let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" height="auto" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">`;
+
+    data.forEach((val, i) => {
+      const sliceAngle = (val / total) * 2 * Math.PI;
+      const endAngle = startAngle + sliceAngle;
+
+      const x1 = cx + radius * Math.cos(startAngle);
+      const y1 = cy + radius * Math.sin(startAngle);
+      const x2 = cx + radius * Math.cos(endAngle);
+      const y2 = cy + radius * Math.sin(endAngle);
+      const largeArc = sliceAngle > Math.PI ? 1 : 0;
+
+      svg += `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z" fill="hsl(${(i * 360) / data.length},65%,58%)"/>`;
+
+      if (sliceAngle > 0.15) {
+        const mid = startAngle + sliceAngle / 2;
+        const lineStartX = cx + radius * Math.cos(mid);
+        const lineStartY = cy + radius * Math.sin(mid);
+        const lineEndX = cx + (radius + 40) * Math.cos(mid);
+        const lineEndY = cy + (radius + 40) * Math.sin(mid);
+        const percent = ((val / total) * 100).toFixed(1);
+        const anchor = Math.cos(mid) >= 0 ? "start" : "end";
+        const textX = lineEndX + (anchor === "start" ? 5 : -5);
+
+        svg += `
+          <line x1="${lineStartX}" y1="${lineStartY}" x2="${lineEndX}" y2="${lineEndY}" stroke="#666"/>
+          <text x="${textX}" y="${lineEndY}" font-size="11" text-anchor="${anchor}">${labels[i]} (${percent}%)</text>
+        `;
+      }
+
+      startAngle = endAngle;
+    });
+
+    svg += `</svg>`;
+    return svg;
+  }
+};
+
+const { div, button, span, h2, p } = h;
+
+export function modal({
+  id = "modal",
+  title = "Modal Title",
+  size = "md",
+  content = "",
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
+} = {}) {
+  const sizeMap = { sm: "360px", md: "520px", lg: "720px" };
+  const maxWidth = sizeMap[size] ?? sizeMap.md;
+
+  return div(
+    {
+      id,
+      role: "dialog",
+      "aria-modal": "true",
+      "aria-labelledby": `${id}-title`,
+      style: {
+        display: "none",
+        position: "fixed",
+        inset: "0",
+        "z-index": "9999",
+        "align-items": "center",
+        "justify-content": "center",
+        background: "rgba(10,10,20,0.55)",
+        "backdrop-filter": "blur(4px)",
+      },
+    },
+    div(
+      {
+        role: "document",
+        style: {
+          position: "relative",
+          width: `min(${maxWidth}, calc(100vw - 2rem))`,
+          background: "#ffffff",
+          "border-radius": "16px",
+          "box-shadow": "0 24px 60px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08)",
+          overflow: "hidden",
+        },
+      },
+      div({
+        style: {
+          height: "4px",
+          background: "linear-gradient(90deg,#6366f1,#a78bfa,#38bdf8)",
+        },
+      }),
+      div(
+        {
+          style: {
+            display: "flex",
+            "align-items": "center",
+            "justify-content": "space-between",
+            padding: "1.25rem 1.5rem 0",
+          },
+        },
+        h2(
+          {
+            id: `${id}-title`,
+            style: {
+              margin: "0",
+              "font-size": "1.125rem",
+              "font-weight": "700",
+              color: "#0f0f1a",
+              "letter-spacing": "-0.01em",
+            },
+          },
+          title
+        ),
+        button(
+          {
+            onclick: `document.getElementById('${id}').style.display='none'`,
+            "aria-label": "Close modal",
+            style: {
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "4px",
+              "border-radius": "6px",
+              color: "#6b7280",
+              "line-height": "1",
+            },
+          },
+          `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4L14 14M14 4L4 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>`
+        )
+      ),
+      div(
+        {
+          id: `${id}-body`,
+          style: {
+            padding: "1rem 1.5rem 0",
+            color: "#374151",
+            "font-size": "0.9375rem",
+            "line-height": "1.65",
+          },
+        },
+        content
+          ? p({ style: { margin: "0" } }, content)
+          : span({ style: { display: "none" } })
+      ),
+      div(
+        {
+          style: {
+            display: "flex",
+            "justify-content": "flex-end",
+            gap: "0.625rem",
+            padding: "1.25rem 1.5rem",
+          },
+        },
+        button(
+          {
+            onclick: `document.getElementById('${id}').style.display='none'`,
+            style: {
+              padding: "0.5rem 1.125rem",
+              "border-radius": "8px",
+              border: "1.5px solid #e5e7eb",
+              background: "#ffffff",
+              color: "#374151",
+              "font-size": "0.875rem",
+              "font-weight": "500",
+              cursor: "pointer",
+            },
+          },
+          cancelLabel
+        ),
+        button(
+          {
+            id: `${id}-confirm`,
+            style: {
+              padding: "0.5rem 1.125rem",
+              "border-radius": "8px",
+              border: "none",
+              background: "linear-gradient(135deg,#6366f1,#818cf8)",
+              color: "#ffffff",
+              "font-size": "0.875rem",
+              "font-weight": "600",
+              cursor: "pointer",
+              "box-shadow": "0 2px 8px rgba(99,102,241,0.35)",
+            },
+          },
+          confirmLabel
+        )
+      )
+    )
+  );
+}
+
+export function openModal(id = "modal", bodyHTML = null) {
+  return `
+    (function(){
+      var m = document.getElementById(${JSON.stringify(id)});
+      if (!m) return;
+      ${bodyHTML != null ? `document.getElementById(${JSON.stringify(id + "-body")}).innerHTML = ${JSON.stringify(bodyHTML)};` : ""}
+      m.style.display = 'flex';
+      m.querySelector('[id$="-confirm"]')?.focus();
+      m.onclick = function(e){ if(e.target === m) m.style.display='none'; };
+      document.onkeydown = function(e){ if(e.key==='Escape') m.style.display='none'; };
+    })();
+  `;
+}
+
 
 export const render = async ({ filename }, content) => {
   const inits = `
