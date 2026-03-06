@@ -1,308 +1,141 @@
-<!DOCTYPE html>
-<html><head><title>Full API Test</title><meta property="og:title" content="Full API Test"><meta name="twitter:title" content="Full API Test"><meta name="description" content="Testing the new head function"><meta property="og:description" content="Testing the new head function"><meta name="twitter:description" content="Testing the new head function"><meta property="og:image" content="/og-preview.jpg"><meta name="twitter:image" content="/og-preview.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="icon" type="image/png" href="/favicon.png"><script src="https://cdn.tailwindcss.com" defer></script></head><body><h1>Universal API Tester</h1><div class="loading">Loading...</div><section><h2>POST: Create Post</h2><form id="create-form"><input name="title" placeholder="Post Title"><textarea name="body" placeholder="Post content..."></textarea><button>Create Post</button></form><div id="post-result"></div></section><section><h2>PUT: Update User</h2><form id="update-form"><input name="id" placeholder="User ID to update"><input name="name" placeholder="New Name"><button>Update Name</button><div class="update-status">Waiting for action...</div></form></section><section><h2>DELETE: Remove Post</h2><div><input id="del-id" name="id" placeholder="Post ID"><button id="del-btn" style="background: red">Delete Now</button></div><div id="delete-log">No deletions yet.</div></section><section><h2>GET: Fetch User on Change</h2><div><label>Select User ID: </label><input id="user-select" name="id" type="number" value="1"></div><div id="user-card">Change the number to fetch...</div></section><script>
-(() => {
-  const el = document.querySelector("#create-form");
-  if (!el) return;
+<html><body>
+  <script>
+  
+  window.fetchData = (config = {}) => {
+    const {
+      url,
+      target,
+      template = "",
+      loading = "",
+      onSuccess = (data) => {},
+      onError = (err) => console.error(err),
+      refetchInterval = 0
+    } = config;
 
-  const loadingEl = ".loading" ? document.querySelector(".loading") : null;
-  if (loadingEl) loadingEl.style.display = "none";
+    const targetEl = document.querySelector(target);
+    const loadingEl = loading ? document.querySelector(loading) : null;
+    if (!targetEl) return;
 
-  el.addEventListener("submit", async (e) => {
-    if ("submit" === "submit") e.preventDefault();
+    const parse = (tpl, item) => {
+      return tpl.split("{").map((part, i) => {
+        if (i === 0) return part;
+        const [path, ...rest] = part.split("}");
+        const value = path.split(".").reduce((obj, key) => obj?.[key], item);
+        return (value !== undefined && value !== null ? value : "") + rest.join("}");
+      }).join("");
+    };
 
-    const targetSelector = "#post-result";
-    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
+    const doFetch = async () => {
+      try {
+        if (loadingEl) loadingEl.style.display = "";
 
-    if (loadingEl) loadingEl.style.display = "";
+        const res = await window.fetch(url);
+        if (!res.ok) throw new Error("HTTP " + res.status);
 
-    try {
-      const data = {};
+        const data = await res.json();
 
-      if (el.tagName === "FORM") {
-        new FormData(el).forEach((v, k) => { data[k] = v; });
-      } else if (el.name || (el.value !== undefined && el.value !== null)) {
-        data[el.name || "value"] = el.value;
+        if (loadingEl) loadingEl.style.display = "none";
+
+        const items = Array.isArray(data) ? data : [data];
+        const html = items.map(item => parse(template, item)).join("");
+        targetEl.innerHTML = html;
+
+        onSuccess(data);
+      } catch (e) {
+        if (loadingEl) loadingEl.style.display = "none";
+        targetEl.innerHTML = "Error";
+        onError(e);
+      } finally {
+        if (refetchInterval > 0) setTimeout(doFetch, refetchInterval);
       }
+    };
 
-      let finalUrl = "https://jsonplaceholder.typicode.com/posts";
-      Object.keys(data).forEach(key => {
-        const regex = new RegExp(":" + key, "g");
-        if (regex.test(finalUrl)) {
-          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-          if ("json" === "param") delete data[key];
+    doFetch();
+  };
+  
+  
+  window.action = (selector, config = {}) => {
+    const {
+      on = "submit",
+      url,
+      method = "POST",
+      target = "",
+      loading = "",
+      template = "",
+      onSuccess = (data) => {},
+      onError = (err) => {}
+    } = config;
+
+    const el = document.querySelector(selector);
+    if (!el) return;
+
+    el.addEventListener(on, async (e) => {
+      if (on === "submit") e.preventDefault();
+
+      const targetEl = target ? document.querySelector(target) : null;
+      const loadingEl = loading ? document.querySelector(loading) : null;
+
+      if (loadingEl) loadingEl.style.display = "";
+
+      try {
+        const formData = {};
+
+        if (el.tagName === "FORM") {
+          new FormData(el).forEach((v, k) => { formData[k] = v; });
+        } else {
+          formData[el.name || "value"] = el.value;
         }
-      });
 
-      const options = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
-      };
+        let finalUrl = url;
+        const bodyData = { ...formData };
 
-      if (options.method !== "GET") {
-        options.body = JSON.stringify(data);
-      }
+        Object.keys(formData).forEach(key => {
+          const placeholder = ":" + key;
+          if (finalUrl.includes(placeholder)) {
+            finalUrl = finalUrl.replace(placeholder, encodeURIComponent(formData[key]));
+            delete bodyData[key];
+          }
+        });
 
-      const res = await fetch(finalUrl, options);
-      if (!res.ok) throw new Error("Server Error: " + res.status);
+        const isGet = method.toUpperCase() === "GET";
 
-      const resultData = await res.json();
-
-      const parse = (tpl, item) => {
-        return tpl.split("{").map((part, i) => {
-          if (i === 0) return part;
-          const [path, ...rest] = part.split("}");
-          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
-          return (value !== undefined && value !== null ? value : "") + rest.join("}");
-        }).join("");
-      };
-
-      if (targetEl && `<div>✅ Created ID: {id}</div>`.trim() !== "") {
-        targetEl.innerHTML = parse(`<div>✅ Created ID: {id}</div>`, resultData);
-      }
-
-      if (loadingEl && loadingEl !== targetEl) {
-        loadingEl.style.display = "none";
-      }
-
-      ((r) => {
-    console.log(r);
-  })(resultData);
-
-    } catch (err) {
-      if (loadingEl && loadingEl !== targetEl) {
-        loadingEl.style.display = "none";
-      }
-
-      ((r) => console.error(r.message))({ message: err.message });
-    }
-  });
-})();
-
-(() => {
-  const el = document.querySelector("#update-form");
-  if (!el) return;
-
-  const loadingEl = ".loading" ? document.querySelector(".loading") : null;
-  if (loadingEl) loadingEl.style.display = "none";
-
-  el.addEventListener("submit", async (e) => {
-    if ("submit" === "submit") e.preventDefault();
-
-    const targetSelector = ".update-status";
-    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
-
-    if (loadingEl) loadingEl.style.display = "";
-
-    try {
-      const data = {};
-
-      if (el.tagName === "FORM") {
-        new FormData(el).forEach((v, k) => { data[k] = v; });
-      } else if (el.name || (el.value !== undefined && el.value !== null)) {
-        data[el.name || "value"] = el.value;
-      }
-
-      let finalUrl = "https://jsonplaceholder.typicode.com/users/:id";
-      Object.keys(data).forEach(key => {
-        const regex = new RegExp(":" + key, "g");
-        if (regex.test(finalUrl)) {
-          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-          if ("param" === "param") delete data[key];
+        if (isGet) {
+          const params = new URLSearchParams(bodyData).toString();
+          if (params) finalUrl += (finalUrl.includes("?") ? "&" : "?") + params;
         }
-      });
 
-      const options = {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" }
-      };
+        const res = await window.fetch(finalUrl, {
+          method: method.toUpperCase(),
+          headers: !isGet ? { "Content-Type": "application/json" } : {},
+          body: !isGet ? JSON.stringify(bodyData) : null
+        });
 
-      if (options.method !== "GET") {
-        options.body = JSON.stringify(data);
-      }
+        if (!res.ok) throw new Error("Status: " + res.status);
 
-      const res = await fetch(finalUrl, options);
-      if (!res.ok) throw new Error("Server Error: " + res.status);
+        const result = await res.json();
 
-      const resultData = await res.json();
+        if (loadingEl) loadingEl.style.display = "none";
 
-      const parse = (tpl, item) => {
-        return tpl.split("{").map((part, i) => {
-          if (i === 0) return part;
-          const [path, ...rest] = part.split("}");
-          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
-          return (value !== undefined && value !== null ? value : "") + rest.join("}");
-        }).join("");
-      };
+        if (targetEl && template) {
+          const parse = (tpl, item) => {
+            return tpl.split("{").map((part, i) => {
+              if (i === 0) return part;
+              const [path, ...rest] = part.split("}");
+              const val = path.split(".").reduce((obj, k) => obj?.[k], item);
+              return (val !== undefined && val !== null ? val : "") + rest.join("}");
+            }).join("");
+          };
 
-      if (targetEl && `<div>👤 Updated: {name}</div>`.trim() !== "") {
-        targetEl.innerHTML = parse(`<div>👤 Updated: {name}</div>`, resultData);
-      }
-
-      if (loadingEl && loadingEl !== targetEl) {
-        loadingEl.style.display = "none";
-      }
-
-      ((r) => console.log(r))(resultData);
-
-    } catch (err) {
-      if (loadingEl && loadingEl !== targetEl) {
-        loadingEl.style.display = "none";
-      }
-
-      ((r) => console.error(r.message))({ message: err.message });
-    }
-  });
-})();
-
-(() => {
-  const el = document.querySelector("#del-btn");
-  if (!el) return;
-
-  const loadingEl = ".loading" ? document.querySelector(".loading") : null;
-  if (loadingEl) loadingEl.style.display = "none";
-
-  el.addEventListener("click", async (e) => {
-    if ("click" === "submit") e.preventDefault();
-
-    const targetSelector = "#delete-log";
-    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
-
-    if (loadingEl) loadingEl.style.display = "";
-
-    try {
-      const data = {};
-
-      if (el.tagName === "FORM") {
-        new FormData(el).forEach((v, k) => { data[k] = v; });
-      } else if (el.name || (el.value !== undefined && el.value !== null)) {
-        data[el.name || "value"] = el.value;
-      }
-
-      let finalUrl = "https://jsonplaceholder.typicode.com/posts/:id";
-      Object.keys(data).forEach(key => {
-        const regex = new RegExp(":" + key, "g");
-        if (regex.test(finalUrl)) {
-          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-          if ("param" === "param") delete data[key];
+          targetEl.innerHTML = parse(template, result);
         }
-      });
 
-      const options = {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" }
-      };
-
-      if (options.method !== "GET") {
-        options.body = JSON.stringify(data);
+        onSuccess(result);
+      } catch (err) {
+        if (loadingEl) loadingEl.style.display = "none";
+        onError(err);
       }
-
-      const res = await fetch(finalUrl, options);
-      if (!res.ok) throw new Error("Server Error: " + res.status);
-
-      const resultData = await res.json();
-
-      const parse = (tpl, item) => {
-        return tpl.split("{").map((part, i) => {
-          if (i === 0) return part;
-          const [path, ...rest] = part.split("}");
-          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
-          return (value !== undefined && value !== null ? value : "") + rest.join("}");
-        }).join("");
-      };
-
-      if (targetEl && `<div>🗑️ Deleted successfully!</div>`.trim() !== "") {
-        targetEl.innerHTML = parse(`<div>🗑️ Deleted successfully!</div>`, resultData);
-      }
-
-      if (loadingEl && loadingEl !== targetEl) {
-        loadingEl.style.display = "none";
-      }
-
-      ((r) => console.log(r))(resultData);
-
-    } catch (err) {
-      if (loadingEl && loadingEl !== targetEl) {
-        loadingEl.style.display = "none";
-      }
-
-      ((r) => console.error(r.message))({ message: err.message });
-    }
-  });
-})();
-
-(() => {
-  const el = document.querySelector("#user-select");
-  if (!el) return;
-
-  const loadingEl = ".loading" ? document.querySelector(".loading") : null;
-  if (loadingEl) loadingEl.style.display = "none";
-
-  el.addEventListener("change", async (e) => {
-    if ("change" === "submit") e.preventDefault();
-
-    const targetSelector = "#user-card";
-    const targetEl = targetSelector ? document.querySelector(targetSelector) : null;
-
-    if (loadingEl) loadingEl.style.display = "";
-
-    try {
-      const data = {};
-
-      if (el.tagName === "FORM") {
-        new FormData(el).forEach((v, k) => { data[k] = v; });
-      } else if (el.name || (el.value !== undefined && el.value !== null)) {
-        data[el.name || "value"] = el.value;
-      }
-
-      let finalUrl = "https://jsonplaceholder.typicode.com/users/:id";
-      Object.keys(data).forEach(key => {
-        const regex = new RegExp(":" + key, "g");
-        if (regex.test(finalUrl)) {
-          finalUrl = finalUrl.replace(regex, encodeURIComponent(data[key]));
-          if ("param" === "param") delete data[key];
-        }
-      });
-
-      const options = {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-      };
-
-      if (options.method !== "GET") {
-        options.body = JSON.stringify(data);
-      }
-
-      const res = await fetch(finalUrl, options);
-      if (!res.ok) throw new Error("Server Error: " + res.status);
-
-      const resultData = await res.json();
-
-      const parse = (tpl, item) => {
-        return tpl.split("{").map((part, i) => {
-          if (i === 0) return part;
-          const [path, ...rest] = part.split("}");
-          const value = path.split(".").reduce((obj, key) => obj?.[key], item);
-          return (value !== undefined && value !== null ? value : "") + rest.join("}");
-        }).join("");
-      };
-
-      if (targetEl && `<div><h4>{name}</h4><p>Email: {email}</p><p>City: {address.city}</p></div>`.trim() !== "") {
-        targetEl.innerHTML = parse(`<div><h4>{name}</h4><p>Email: {email}</p><p>City: {address.city}</p></div>`, resultData);
-      }
-
-      if (loadingEl && loadingEl !== targetEl) {
-        loadingEl.style.display = "none";
-      }
-
-      ((r) => console.log(r))(resultData);
-
-    } catch (err) {
-      if (loadingEl && loadingEl !== targetEl) {
-        loadingEl.style.display = "none";
-      }
-
-      ((r) => console.error(r.message))({ message: err.message });
-    }
-  });
-})();
-</script></body></html>
+    });
+  };
+  
+  </script>
+  <h1>API Test</h1><div id="post-list"></div><span id="loader" style="display:none">Loading...</span><div id="user-list"></div><form id="add-user-form"><input name="title" placeholder="Post title"><button type="submit">Create Post</button></form><script>window.fetchData({"url":"https://jsonplaceholder.typicode.com/posts?_limit=5","target":"#post-list","loading":"#loader","template":"<div><strong>{title}</strong><p>{body}</p></div>"});window.action("#add-user-form", {"url":"https://jsonplaceholder.typicode.com/posts","method":"POST","target":"#user-list","template":"<div>New post created: <strong>{title}</strong></div>"});</script></body></html>
