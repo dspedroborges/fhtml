@@ -21,7 +21,7 @@ const pageContent = html(
         url: "https://rickandmortyapi.com/api/character",
         loading: "#loader",
         targets: ["#character-list"],
-        dataKeys: ["results"],
+        keys: ["results"],
         templates: [
           div(
             img({ src: "{image}", width: "80" }),
@@ -38,7 +38,7 @@ const pageContent = html(
         url: "https://rickandmortyapi.com/api/character/?name=:name",
         method: "GET",
         targets: ["#search-result"],
-        dataKeys: ["results"],
+        keys: ["results"],
         templates: [
           div(
             img({ src: "{image}", width: "120" }),

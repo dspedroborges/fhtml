@@ -146,7 +146,7 @@ export const fetchInit = () => {
       url,
       targets = [],
       templates = [],
-      dataKeys = [],
+      keys = [],
       loading = "",
       onSuccess = (data) => {},
       onError = (err) => console.error(err),
@@ -178,7 +178,7 @@ export const fetchInit = () => {
         targets.forEach((_, i) => {
           const targetEl = targetEls[i];
           const template = templates[i];
-          const key = dataKeys[i];
+          const key = keys[i];
 
           if (!targetEl || !template) return;
 
@@ -212,7 +212,7 @@ export const actionInit = () => {
       method = "POST",
       targets = [],
       templates = [],
-      dataKeys = [],
+      keys = [],
       loading = "",
       onSuccess = (data) => {},
       onError = (err) => {}
@@ -279,7 +279,7 @@ export const actionInit = () => {
         targets.forEach((_, i) => {
           const targetEl = targetEls[i];
           const template = templates[i];
-          const key = dataKeys[i];
+          const key = keys[i];
 
           if (!targetEl || !template) return;
 
