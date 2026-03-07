@@ -1,5 +1,21 @@
-import { mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { join, dirname } from "node:path";
+import { html as beautify } from "js-beautify";
+
+const libsDir = join(__dirname, "utils", "libs");
+
+async function loadLibs(names = []) {
+    const scripts = [];
+    for (const name of names) {
+        try {
+            const content = await readFile(join(libsDir, `${name}.txt`), "utf-8");
+            scripts.push(content.trim());
+        } catch (e) {
+            console.warn(`Library '${name}' not found in utils/libs/`);
+        }
+    }
+    return scripts;
+}
 
 const escapeAttr = (str) =>
     String(str)
@@ -750,17 +766,37 @@ export function openModal(id = "modal", bodyHTML = null) {
   `;
 }
 
-
-export const render = async ({ filename }, content) => {
-    const inits = `
-  <script>
-    ${parseFunction()}
-    ${fetchInit()}
-    ${actionInit()}
-  </script>
-  `;
-
-    const html = content.replace("<body>", `<body>${inits}`);
-
-    await Bun.write(filename, html);
+export const render = async ({ filename }, content, config = {}) => {
+    const basename = filename.split("/").pop();
+    filename = "dist/" + basename;
+    const outputDir = join(dirname(filename), "libs");
+    const scriptTags = [];
+    if (config.api) {
+        const apiCode = `${parseFunction()}\n\n${fetchInit()}\n\n${actionInit()}`;
+        await mkdir(outputDir, { recursive: true });
+        await writeFile(join(outputDir, "api.js"), apiCode);
+        scriptTags.push(`<script src="libs/api.js"></script>`);
+    }
+    if (config.libs?.length) {
+        await mkdir(outputDir, { recursive: true });
+        const libScripts = await loadLibs(config.libs);
+        for (let i = 0; i < config.libs.length; i++) {
+            const libName = config.libs[i];
+            const libCode = libScripts[i];
+            if (libCode) {
+                await writeFile(join(outputDir, `${libName}.js`), libCode);
+                scriptTags.push(`<script src="libs/${libName}.js" defer></script>`);
+            }
+        }
+    }
+    const html = scriptTags.length
+        ? content.replace("</head>", `${scriptTags.join("\n")}</head>`)
+        : content;
+    const pretty = beautify(html, {
+        indent_size: 2,
+        wrap_line_length: 120,
+        preserve_newlines: false,
+        extra_liners: [],
+    });
+    await Bun.write(filename, pretty);
 };

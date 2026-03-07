@@ -1,0 +1,13 @@
+{
+  "name": "fhtml",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "js-beautify": "^1.15.4"
+  }
+}
