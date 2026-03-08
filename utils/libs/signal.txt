@@ -1,0 +1,23 @@
+let currentEffect = null;
+
+function signal(value) {
+  const subs = new Set();
+
+  const get = () => {
+    if (currentEffect) subs.add(currentEffect);
+    return value;
+  };
+
+  const set = (v) => {
+    value = v;
+    subs.forEach(fn => fn());
+  };
+
+  return [get, set];
+}
+
+function effect(fn) {
+  currentEffect = fn;
+  fn();
+  currentEffect = null;
+}

@@ -1,1 +1,98 @@
-function f(e,o=document){const r=Array.from(o.querySelectorAll(e)),s={elements:r,on:(e,o,a)=>(r.forEach((r=>r.addEventListener(e,o,a))),s),off:(e,o,a)=>(r.forEach((r=>r.removeEventListener(e,o,a))),s),addClass:e=>(r.forEach((o=>o.classList.add(e))),s),removeClass:e=>(r.forEach((o=>o.classList.remove(e))),s),toggleClass:(e,o)=>(r.forEach((r=>r.classList.toggle(e,o))),s),remove:()=>(r.forEach((e=>e.remove())),s),get:(e=0)=>r[e]};return s}
+function f(selector) {
+  const elements = typeof selector === "string"
+    ? [...document.querySelectorAll(selector)]
+    : selector instanceof Element
+    ? [selector]
+    : [...selector];
+
+  const api = {
+    el: elements,
+
+    on(event, handler, options) {
+      elements.forEach(el => el.addEventListener(event, handler, options));
+      return api;
+    },
+
+    addClass(cls) {
+      elements.forEach(el => el.classList.add(...cls.split(" ")));
+      return api;
+    },
+
+    removeClass(cls) {
+      elements.forEach(el => el.classList.remove(...cls.split(" ")));
+      return api;
+    },
+
+    toggleClass(cls) {
+      elements.forEach(el => el.classList.toggle(cls));
+      return api;
+    },
+
+    attr(name, value) {
+      if (value === undefined) return elements[0]?.getAttribute(name);
+      elements.forEach(el => el.setAttribute(name, value));
+      return api;
+    },
+
+    removeAttr(name) {
+      elements.forEach(el => el.removeAttribute(name));
+      return api;
+    },
+
+    append(content) {
+      elements.forEach(el => el.insertAdjacentHTML("beforeend", content));
+      return api;
+    },
+
+    prepend(content) {
+      elements.forEach(el => el.insertAdjacentHTML("afterbegin", content));
+      return api;
+    },
+
+    remove() {
+      elements.forEach(el => el.remove());
+    },
+
+    swap(content) {
+      if (content === undefined) return elements[0]?.innerHTML;
+      elements.forEach(el => el.innerHTML = content);
+      return api;
+    }
+  };
+
+  return api;
+}
+
+function id(name) {
+  return f("#" + name);
+}
+
+function cls(name) {
+  return f("." + name);
+}
+
+function signal(initial) {
+  let value = initial;
+  const subs = new Set();
+
+  function get() {
+    return value;
+  }
+
+  function set(v) {
+    value = v;
+    subs.forEach(fn => fn(value));
+  }
+
+  function update(fn) {
+    set(fn(value));
+  }
+
+  function subscribe(fn) {
+    subs.add(fn);
+    fn(value);
+    return () => subs.delete(fn);
+  }
+
+  return { get, set, update, subscribe };
+}
