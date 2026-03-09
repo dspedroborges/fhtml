@@ -42,10 +42,10 @@ await generate("index.html", content);
 ### Build
 
 ```bash
-bun run fhtml.js
+bun run index.js
 ```
 
-This watches all `.js` files and compiles them to HTML on change. Output goes to `dist/`.
+This runs your source file and generates HTML to `dist/`. Run it again whenever you make changes.
 
 ### Using Imports
 
