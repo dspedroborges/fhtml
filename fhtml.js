@@ -1,178 +1,300 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
-import { html as beautify } from "js-beautify";
-import { mapTemplate, actionInit, action } from "./utils/api.js";
-export { chart } from "./utils/chart.js";
-export const api = { mapTemplate, actionInit, action };
+// html.js — Functional HTML builder + static file generator for Bun
+import { mkdir, writeFile, cp, access } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { html_beautify } from "js-beautify";
 
-const libsDir = join(__dirname, "utils", "libs");
+// ─── Escaping ────────────────────────────────────────────────────────────────
 
-async function loadLibs(names = []) {
-    const scripts = [];
-    for (const name of names) {
-        try {
-            const content = await readFile(join(libsDir, `${name}.txt`), "utf-8");
-            scripts.push(content.trim());
-        } catch (e) {
-            console.warn(`Library '${name}' not found in utils/libs/`);
-        }
-    }
-    return scripts;
-}
-
-export const js = (...fns) => fns.map(fn => {
-    const src = fn.toString();
-    const body = src.slice(src.indexOf('{') + 1, src.lastIndexOf('}'));
-    return body.replace(/^\n|\n\s*$/g, '').replace(/^    /gm, '');
-}).join('\n');
-
-const escapeAttr = (str) =>
-    String(str)
+function escapeHtml(str) {
+    return String(str)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
-
-function el(tag, props = {}, ...children) {
-    const { children: propChildren, ...attrs } = props || {};
-
-    const attrString = Object.entries(attrs)
-        .filter(([_, v]) => v != null && v !== false)
-        .map(([k, v]) => {
-            if (v === true) return k;
-            if (k === "style" && typeof v === "object") {
-                const style = Object.entries(v)
-                    .map(([p, val]) => `${p.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}:${val}`)
-                    .join(";");
-                return `style="${escapeAttr(style)}"`;
-            }
-            return `${k}="${escapeAttr(v)}"`;
-        })
-        .join(" ");
-
-    const flatChildren = [children, propChildren]
-        .flat(Infinity)
-        .filter(c => c != null && c !== false)
-        .map(c => String(c))
-        .join("");
-
-    const openTag = `<${tag}${attrString ? " " + attrString : ""}>`;
-    return voidTags.has(tag) ? openTag : `${openTag}${flatChildren}</${tag}>`;
 }
 
-const tags = [
-    "html", "head", "title", "base", "link", "meta", "style", "script",
-    "noscript", "body", "section", "nav", "article", "aside", "h1", "h2",
-    "h3", "h4", "h5", "h6", "header", "footer", "address", "main", "p",
-    "hr", "pre", "blockquote", "ol", "ul", "li", "dl", "dt", "dd",
-    "figure", "figcaption", "div", "a", "em", "strong", "small", "s",
-    "cite", "q", "dfn", "abbr", "ruby", "rt", "rp", "data", "time",
-    "code", "var", "samp", "kbd", "sub", "sup", "i", "b", "u", "mark",
-    "bdi", "bdo", "span", "br", "wbr", "ins", "del", "picture", "source",
-    "img", "iframe", "embed", "object", "param", "video", "audio",
-    "track", "map", "area", "table", "caption", "colgroup", "col",
-    "tbody", "thead", "tfoot", "tr", "td", "th", "form", "label",
-    "input", "button", "select", "datalist", "optgroup", "option",
-    "textarea", "output", "progress", "meter", "fieldset", "legend",
-    "details", "summary", "dialog", "canvas", "svg", "slot", "template",
-    "text", "rect", "line", "path", "circle", "linearGradient", "radialGradient", "stop", "defs", "g", "polyline", "polygon"
-];
+function escapeAttr(value) {
+    return String(value).replace(/"/g, "&quot;");
+}
 
-const voidTags = new Set([
-    "area", "base", "br", "col", "embed", "hr", "img", "input",
-    "link", "meta", "param", "source", "track", "wbr",
-    "rect", "circle", "ellipse", "line"
+// ─── RawHtml wrapper ─────────────────────────────────────────────────────────
+
+class RawHtml {
+    constructor(html) { this.html = html; }
+    toString() { return this.html; }
+    toJSON() { return this.html; }
+}
+
+// ─── Render ──────────────────────────────────────────────────────────────────
+
+function render(node) {
+    if (node == null || node === false) return "";
+    if (node instanceof RawHtml) return node.html;
+    if (Array.isArray(node)) return node.map(render).join("");
+    return escapeHtml(node);
+}
+
+// ─── Core tag factory ────────────────────────────────────────────────────────
+
+const SELF_CLOSING = new Set([
+    "area", "base", "br", "col", "embed", "hr", "img",
+    "input", "link", "meta", "param", "source", "track", "wbr",
 ]);
 
-export const h = Object.fromEntries(
-    tags.map(tag => [
-        tag,
-        (props, ...children) => {
-            const isProps = props?.constructor === Object && !Array.isArray(props);
-            const finalProps = isProps ? props : {};
-            const finalChildren = isProps ? children : [props, ...children];
-
-            if (tag === "head" && isProps && !finalProps.tag) {
-                return createSmartHead(finalProps, ...finalChildren);
-            }
-
-            return el(tag, finalProps, ...finalChildren);
-        }
-    ])
-);
-
-export { modal, openModal } from "./utils/modal.js";
-
-function createSmartHead(config, ...manualChildren) {
-    const { title, meta, link, script } = h;
-    const { title: t, description: d, author, thumbnail, url, icon, imports = [], ...rest } = config;
-    const headChildren = [];
-
-    if (t) {
-        headChildren.push(title(t));
-        headChildren.push(meta({ property: "og:title", content: t }));
-    }
-    if (d) {
-        headChildren.push(meta({ name: "description", content: d }));
-        headChildren.push(meta({ property: "og:description", content: d }));
-    }
-    if (author) headChildren.push(meta({ name: "author", content: author }));
-    if (thumbnail) {
-        headChildren.push(meta({ property: "og:image", content: thumbnail }));
-        headChildren.push(meta({ name: "twitter:card", content: "summary_large_image" }));
-    }
-    if (url) {
-        headChildren.push(meta({ property: "og:url", content: url }));
-        headChildren.push(link({ rel: "canonical", href: url }));
-    }
-    if (icon) headChildren.push(link({ rel: "icon", href: icon }));
-
-    imports.forEach(p => {
-        const cp = p.toLowerCase();
-        if (cp.endsWith(".css")) headChildren.push(link({ rel: "stylesheet", href: p }));
-        else if (cp.endsWith(".js")) headChildren.push(script({ src: p, defer: true }));
-    });
-
-    Object.entries(rest).forEach(([n, c]) => headChildren.push(meta({ name: n, content: c })));
-
-    return el("head", {}, ...headChildren, ...manualChildren);
+function buildAttrs(props) {
+    return Object.entries(props)
+        .map(([k, v]) => {
+            if (v === true) return ` ${k}`;
+            if (v === false || v == null) return "";
+            return ` ${k}="${escapeAttr(v)}"`;
+        })
+        .join("");
 }
 
-export const render = async ({ filename }, content, plugins = []) => {
-    const basename = filename.split("/").pop();
-    filename = "dist/" + basename;
-    const outputDir = join(dirname(filename), "libs");
-    const scriptTags = [];
+function isProps(v) {
+    return v !== null &&
+        typeof v === "object" &&
+        !Array.isArray(v) &&
+        !(v instanceof RawHtml);
+}
 
-    if (plugins.includes("api")) {
-        const apiCode = `${mapTemplate()}\n\n${actionInit()}`;
-        await mkdir(outputDir, { recursive: true });
-        await writeFile(join(outputDir, "api.js"), apiCode);
-        scriptTags.push(`<script src="libs/api.js"></script>`);
+function tag(name, ...args) {
+    const props = isProps(args[0]) ? args[0] : {};
+    const children = isProps(args[0]) ? args.slice(1) : args;
+    const attrs = buildAttrs(props);
+
+    if (SELF_CLOSING.has(name)) {
+        return new RawHtml(`<${name}${attrs} />`);
     }
 
-    const libs = plugins.filter(p => p !== "api");
-    if (libs.length) {
-        await mkdir(outputDir, { recursive: true });
-        const libScripts = await loadLibs(libs);
-        for (let i = 0; i < libs.length; i++) {
-            const libName = libs[i];
-            const libCode = libScripts[i];
-            if (libCode) {
-                await writeFile(join(outputDir, `${libName}.js`), libCode);
-                scriptTags.push(`<script src="libs/${libName}.js" defer></script>`);
-            }
+    const inner = children.flat(Infinity).map(render).join("");
+    return new RawHtml(`<${name}${attrs}>${inner}</${name}>`);
+}
+
+// ─── All HTML tags ────────────────────────────────────────────────────────────
+
+const HTML_TAGS = [
+    // Document metadata
+    "html", "head", "body", "title", "base", "link", "meta", "style",
+    // Sectioning
+    "article", "aside", "footer", "header",
+    "h1", "h2", "h3", "h4", "h5", "h6",
+    "main", "nav", "section", "address",
+    // Text content
+    "blockquote", "dd", "details", "dialog", "div", "dl", "dt",
+    "figcaption", "figure", "hr", "li", "menu", "ol", "p", "pre",
+    "summary", "ul",
+    // Inline text
+    "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data",
+    "dfn", "em", "i", "kbd", "mark", "q", "rp", "rt", "ruby", "s",
+    "samp", "small", "span", "strong", "sub", "sup", "time", "u",
+    "var", "wbr",
+    // Embedded content
+    "area", "audio", "col", "colgroup", "embed", "iframe", "img",
+    "map", "object", "picture", "source", "track", "video",
+    // Table
+    "caption", "table", "tbody", "td", "tfoot", "th", "thead", "tr",
+    // Forms
+    "button", "datalist", "fieldset", "form", "input", "label",
+    "legend", "meter", "optgroup", "option", "output", "progress",
+    "select", "textarea",
+    // Other
+    "canvas", "noscript", "template",
+];
+
+const tags = Object.fromEntries(
+    HTML_TAGS.map((name) => [name, (...args) => tag(name, ...args)])
+);
+
+// ─── Special script() tag ────────────────────────────────────────────────────
+
+/**
+ * script({ src })                      → external script tag
+ * script({ data, as? }, `...`)         → inline, server data injected first
+ * script(`...`)                        → plain inline script
+ *
+ * `data` is serialised as JSON and assigned to window[as] (default "__data__")
+ * before your inline code runs.
+ */
+function extractBody(fn) {
+    const src = fn.toString();
+    const body = src.slice(src.indexOf('{') + 1, src.lastIndexOf('}'));
+    return body.replace(/^\n|\n\s*$/g, '').replace(/^    /gm, '');
+}
+
+function script(propsOrFn, ...rest) {
+    const props = isProps(propsOrFn) ? propsOrFn : {};
+    const children = isProps(propsOrFn) ? rest : [propsOrFn, ...rest];
+
+    const { data, as: varName = "__data__", ...attrs } = props;
+    const attrStr = buildAttrs(attrs);
+
+    if (attrs.src && children.length === 0) {
+        return new RawHtml(`<script${attrStr}></script>`);
+    }
+
+    let body = "";
+    if (data !== undefined) {
+        body += `window["${varName}"] = ${JSON.stringify(data)};\n`;
+    }
+
+    body += children.flat(Infinity).map((c) => {
+        if (typeof c === "function") return extractBody(c);
+        if (c instanceof RawHtml) return c.html;
+        return String(c ?? "");
+    }).join("");
+
+    return new RawHtml(`<script${attrStr}>\n${body}</script>`);
+}
+
+// ─── createHead ──────────────────────────────────────────────────────────────
+
+/**
+ * Smart <head> builder.
+ *
+ * Config fields:
+ *   title       — <title> + og:title
+ *   description — <meta name="description"> + og:description
+ *   author      — <meta name="author">
+ *   thumbnail   — og:image + twitter:card
+ *   url         — og:url + canonical link
+ *   icon        — <link rel="icon">
+ *   imports     — array of .css / .js paths → <link> or <script defer>
+ *   charset     — defaults to "UTF-8"
+ *   viewport    — defaults to "width=device-width, initial-scale=1"
+ *   ...rest     — any extra keys become <meta name=key content=value>
+ *
+ * Extra children (manual tags) can be appended as additional arguments:
+ *   createHead({ title: "Hi" }, meta({ name: "theme-color", content: "#fff" }))
+ */
+function createHead(config, ...manualChildren) {
+    const {
+        title: t,
+        description: d,
+        author,
+        thumbnail,
+        url,
+        icon,
+        imports = [],
+        charset = "UTF-8",
+        viewport = "width=device-width, initial-scale=1",
+        ...rest
+    } = config;
+
+    const children = [];
+
+    // Always-present basics
+    children.push(tags.meta({ charset }));
+    children.push(tags.meta({ name: "viewport", content: viewport }));
+
+    if (t) {
+        children.push(tags.title(t));
+        children.push(tags.meta({ property: "og:title", content: t }));
+    }
+    if (d) {
+        children.push(tags.meta({ name: "description", content: d }));
+        children.push(tags.meta({ property: "og:description", content: d }));
+    }
+    if (author) children.push(tags.meta({ name: "author", content: author }));
+    if (icon) children.push(tags.link({ rel: "icon", href: icon }));
+    if (thumbnail) {
+        children.push(tags.meta({ property: "og:image", content: thumbnail }));
+        children.push(tags.meta({ name: "twitter:card", content: "summary_large_image" }));
+    }
+    if (url) {
+        children.push(tags.meta({ property: "og:url", content: url }));
+        children.push(tags.link({ rel: "canonical", href: url }));
+    }
+
+    // .css → <link rel="stylesheet">, .js → <script> (append "defer" to the name to defer)
+    // e.g. "action.js" or "action.defer.js"
+    for (const p of imports) {
+        const cp = p.toLowerCase();
+        if (cp.endsWith(".css")) {
+            children.push(tags.link({ rel: "stylesheet", href: "./imports/" + p }));
+        } else if (cp.includes(".js")) {
+            children.push(script({ src: "./imports/" + p.replaceAll("defer", ""), defer: p.includes("defer") }));
         }
     }
 
-    const html = scriptTags.length
-        ? content.replace("</head>", `${scriptTags.join("\n")}</head>`)
-        : content;
-    const pretty = beautify(html, {
+    // Remaining config keys → arbitrary <meta> tags
+    for (const [name, content] of Object.entries(rest)) {
+        children.push(tags.meta({ name, content }));
+    }
+
+    return tag("head", ...children, ...manualChildren);
+}
+
+// ─── page() + generate() ─────────────────────────────────────────────────────
+
+/** Stringify a root node with DOCTYPE. */
+function page(rootNode) {
+    return `<!DOCTYPE html>\n${render(rootNode)}`;
+}
+
+/**
+ * Generate a static HTML file into dist/.
+ *
+ * On the very first call, copies the root-level `imports/` folder into
+ * `dist/imports/` (if the folder exists), so your scripts and assets are
+ * always available alongside the generated pages.
+ *
+ * Usage:
+ *   await generate("index.html", page(html(...)))
+ *   await generate("about/index.html", page(html(...)))
+ */
+let importsCopied = false;
+
+async function copyImports() {
+    try {
+        await access("imports");
+    } catch {
+        return; // no imports/ folder — nothing to do
+    }
+    await cp("imports", "dist/imports", { recursive: true });
+    console.log("  ✓ dist/imports/");
+}
+
+async function generate(filename, content) {
+    // Copy imports/ on first call, once per build
+    if (!importsCopied) {
+        importsCopied = true;
+        await copyImports();
+    }
+
+    const outPath = join("dist", filename);
+    await mkdir(dirname(outPath), { recursive: true });
+
+    const pretty = html_beautify(content, {
         indent_size: 2,
         wrap_line_length: 120,
         preserve_newlines: false,
         extra_liners: [],
+        unformatted: ["script", "style"],
     });
-    await Bun.write(filename, pretty);
-};
+
+    await Bun.write(outPath, pretty);
+    console.log(`  ✓ dist/${filename}`);
+}
+
+// ─── Exports ──────────────────────────────────────────────────────────────────
+
+export const {
+    html, head, body, title, base, link, meta, style,
+    article, aside, footer, header, h1, h2, h3, h4, h5, h6, main, nav, section, address,
+    blockquote, dd, details, dialog, div, dl, dt, figcaption, figure, hr,
+    li, menu, ol, p, pre, summary, ul,
+    a, abbr, b, bdi, bdo, br, cite, code, data, dfn, em, i, kbd, mark, q,
+    rp, rt, ruby, s, samp, small, span, strong, sub, sup, time, u, wbr,
+    area, audio, col, colgroup, embed, iframe, img, map, object, picture, source, track, video,
+    caption, table, tbody, td, tfoot, th, thead, tr,
+    button, datalist, fieldset, form, input, label, legend, meter,
+    optgroup, option, output, progress, select, textarea,
+    canvas, noscript, template,
+} = tags;
+
+export const $var = tags["var"];
+
+function raw(str) { return new RawHtml(str); }
+
+export { tag, raw, render, page, generate, script, createHead };
