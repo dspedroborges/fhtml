@@ -88,7 +88,7 @@ const characterTemplate = div(
 Import and use the built-in chart helper to generate SVG charts:
 
 ```javascript
-import { chart } from "./fhtml.js";
+import { chart, raw } from "./fhtml.js";
 
 // Bar chart
 const barSvg = chart.bar({
@@ -97,24 +97,24 @@ const barSvg = chart.bar({
     colors: { bar: "steelblue", background: "#fafafa" }
 });
 
+// Use in your HTML
+div(raw(barSvg))
+
 // Line chart
-const lineSvg = chart.line({
+chart.line({
     labels: ["Jan", "Feb", "Mar", "Apr", "May"],
     data: [10, 25, 18, 30, 45],
     colors: { lines: ["tomato", "seagreen"] }
 });
 
 // Pie chart
-const pieSvg = chart.pie({
+chart.pie({
     labels: ["Dogs", "Cats", "Birds"],
     data: [40, 35, 25]
 });
-
-// Use in your HTML
-div(barSvg)
 ```
 
-Available chart types: `bar`, `line`, `pie`. All return standalone SVG strings.
+Available chart types: `bar`, `line`, `pie`. All return standalone SVG strings - wrap them with `raw()` when embedding.
 
 ## createHead Options
 
