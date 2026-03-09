@@ -23,7 +23,7 @@ import {
 const myPage = div(
     h1("Hello World"),
     button({ class: "btn" }, "Click me")
-).toString();
+);
 
 // Create a full page with head metadata
 const fullPage = page(
@@ -80,7 +80,7 @@ const characterTemplate = div(
     strong("{{name}}"),
     p("Status: {{status}}"),
     p("Species: {{species}}")
-).toString();
+);
 ```
 
 ## Charts
@@ -111,7 +111,7 @@ const pieSvg = chart.pie({
 });
 
 // Use in your HTML
-div({ dangerouslySetInnerHTML: barSvg })
+div(barSvg)
 ```
 
 Available chart types: `bar`, `line`, `pie`. All return standalone SVG strings.
