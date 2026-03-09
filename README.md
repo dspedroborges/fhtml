@@ -1,22 +1,6 @@
 # Functional HTML (fhtml)
 
-A pet project that lets you write HTML using JavaScript function calls. No JSX, no compilation step beyond running a small script, just pure functional composition.
-
-## What is this?
-
-This is a tiny experiment in building HTML declaratively using JavaScript. Instead of writing:
-
-```html
-<button class="primary">Click me</button>
-```
-
-You write:
-
-```javascript
-button({ class: "primary" }, "Click me")
-```
-
-All HTML tags are available as functions via `h`. Props go first (as an object), followed by children.
+A tiny library that lets you write HTML using JavaScript function calls. No JSX, no build step beyond running a script with Bun, just functional composition. Built because sometimes you want the composability of React without the framework - zero dependencies, just strings.
 
 ## Quick Start
 
@@ -25,78 +9,135 @@ All HTML tags are available as functions via `h`. Props go first (as an object),
 bun run fhtml.js
 ```
 
-This watches all `.fhtml` files and compiles them to HTML on change.
+This watches all `.js` files and compiles them to HTML on change.
 
-## Available Helpers
+## Usage
 
 ```javascript
-import { h, fetch, action, render } from "./fhtml.js";
+import {
+    html, body, div, h1, form, input, button, span, strong, p, img,
+    script, createHead, page, generate,
+} from "./fhtml.js";
 
-const { div, button, span, ... } = h;
+// Build HTML with function calls
+const myPage = div(
+    h1("Hello World"),
+    button({ class: "btn" }, "Click me")
+).toString();
 
-// Attributes
-{ id: "my-id" }              // id attribute
-{ class: "btn large" }       // class attribute
-{ style: { color: "red" } } // style attribute (camelCase to kebab-case)
-{ name: "username" }         // name attribute
+// Create a full page with head metadata
+const fullPage = page(
+    html(
+        createHead({
+            title: "My Page",
+            description: "A cool page",
+            imports: ["styles.css", "app.js"]
+        }),
+        body(
+            div({ id: "app" }, myPage)
+        )
+    )
+);
 
-// Better <head> meta tags
-head({
-  title: "My Page",
-  description: "A cool page",
-  author: "John Doe",
-  thumbnail: "https://example.com/image.png",
-  url: "https://example.com",
-  icon: "/favicon.svg",
-  imports: ["styles.css", "app.js"]
-})
-
-// Fetch data from APIs with auto-refresh polling
-fetch({
-  url: "https://api.example.com/users",
-  target: ".user-list",
-  template: div(span("{name}")),
-  loading: ".loading-el",
-  onSuccess: "(data) => console.log(data)",
-  onError: "(err) => console.error(err)",
-  refetchInterval: 5000
-})
-
-// Form actions with swap support
-action("#my-form", {
-  on: "submit",               // event to listen to (default: "submit")
-  url: "/api/users/:id",     // :id gets replaced with form value
-  method: "POST",
-  target: ".result-container", // where to display response
-  loading: ".loading-el",    // selector for loading element
-  onSuccess: "(data) => console.log(data)",
-  onError: "(err) => console.error(err)",
-  template: div("Created: {name}")
-})
-
-// Render to file
-await render({ filename: "output.html" }, htmlContent);
+// Generate static HTML file
+await generate("index.html", fullPage);
 ```
 
-## Template Syntax
+## Passing Data from Server to Client
 
-Use `{path.to.property}` in templates to interpolate data:
+Use the `script` tag with a `data` property to inject server-side data into the client. The data is serialized as JSON and assigned to `window.__data__` before your inline code runs:
 
 ```javascript
-template: div(span("{user.name}"), span("{user.email}"))
+script({
+    data: {
+        user: { name: "Alice", email: "alice@example.com" },
+        config: { apiUrl: "/api" }
+    },
+}, () => {
+    // window.__data__ is available here
+    console.log(window.__data__.user.name); // "Alice"
+    
+    // Initialize your app
+    initApp(window.__data__.config);
+});
+```
+
+You can customize the variable name with the `as` option:
+
+```javascript
+script({ data: { ... }, as: "APP_DATA" }, () => {
+    console.log(APP_DATA.user.name);
+});
+```
+
+## Templates
+
+Use `{{field}}` syntax in your templates to interpolate data:
+
+```javascript
+const characterTemplate = div(
+    img({ src: "{{image}}" }),
+    strong("{{name}}"),
+    p("Status: {{status}}"),
+    p("Species: {{species}}")
+).toString();
+```
+
+## Charts
+
+Import and use the built-in chart helper to generate SVG charts:
+
+```javascript
+import { chart } from "./fhtml.js";
+
+// Bar chart
+const barSvg = chart.bar({
+    labels: ["Q1", "Q2", "Q3", "Q4"],
+    data: [100, 200, 150, 300],
+    colors: { bar: "steelblue", background: "#fafafa" }
+});
+
+// Line chart
+const lineSvg = chart.line({
+    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+    data: [10, 25, 18, 30, 45],
+    colors: { lines: ["tomato", "seagreen"] }
+});
+
+// Pie chart
+const pieSvg = chart.pie({
+    labels: ["Dogs", "Cats", "Birds"],
+    data: [40, 35, 25]
+});
+
+// Use in your HTML
+div({ dangerouslySetInnerHTML: barSvg })
+```
+
+Available chart types: `bar`, `line`, `pie`. All return standalone SVG strings.
+
+## createHead Options
+
+```javascript
+createHead({
+    title: "Page Title",           // <title> + og:title
+    description: "Page description", // meta description + og:description
+    author: "John Doe",
+    thumbnail: "https://example.com/image.png", // og:image + twitter:card
+    url: "https://example.com/page", // og:url + canonical link
+    icon: "/favicon.svg",
+    imports: ["styles.css", "app.js"] // .css → <link>, .js → <script defer>
+})
 ```
 
 ## Project Structure
 
 ```
 fhtml.js              # Build script (runs with Bun)
-*.fhtml               # Your source files
-*.html                # Compiled output
+*.js                  # Your source files
+dist/                 # Compiled output
+imports/              # Static assets (copied to dist/imports/)
 ```
-
-## Why?
-
-Just a fun experiment. Sometimes you want to build HTML with the same composability as React but without the framework. This is that - zero dependencies, works in the browser or Node, no virtual DOM, just strings.
 
 ## License
 
