@@ -2,6 +2,7 @@
 import { mkdir, writeFile, cp, access } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { html_beautify } from "js-beautify";
+export { chart } from "./utils/chart.js";
 
 // ─── Escaping ────────────────────────────────────────────────────────────────
 

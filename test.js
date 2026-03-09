@@ -1,7 +1,16 @@
 import {
     html, body, div, h1, form, input, button, span, strong, p, img,
     script, createHead, page, generate,
+    raw,
 } from "./fhtml.js";
+import { chart } from "./fhtml.js";
+
+// Bar chart
+const barSvg = chart.bar({
+    labels: ["Q1", "Q2", "Q3", "Q4"],
+    data: [100, 200, 150, 300],
+    colors: { bar: "steelblue", background: "#fafafa" }
+});
 
 // Templates use {{field}} — mapTemplate() in action.js fills these in.
 // For nested fields like origin.name, pre-flatten in onSuccess or use a key path.
@@ -22,6 +31,7 @@ const pageContent = page(
             description: "Test",
             imports: ["api.js"],
         }),
+        div(raw(barSvg)),
         body(
             h1("Rick and Morty Characters"),
 

@@ -113,9 +113,6 @@ script({
 }, () => {
     // window.__data__ is available here
     console.log(window.__data__.user.name); // "Alice"
-    
-    // Initialize your app
-    initApp(window.__data__.config);
 });
 ```
 
