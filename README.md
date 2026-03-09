@@ -2,14 +2,71 @@
 
 A tiny library that lets you write HTML using JavaScript function calls. No JSX, no build step beyond running a script with Bun, just functional composition. Built because sometimes you want the composability of React without the framework - zero dependencies, just strings.
 
-## Quick Start
+## Getting Started
+
+### Install
 
 ```bash
-# Make sure you have Bun installed
+# Install Bun if you haven't
+curl -fsSL https://bun.sh/install | bash
+
+# Clone the repo
+git clone https://github.com/dspedroborges/fhtml
+cd fhtml
+
+# Install dependencies
+bun install
+```
+
+### Create a Page
+
+Create your source file in the project root (e.g., `index.js`):
+
+```javascript
+import { html, body, div, h1, createHead, page, generate } from "./fhtml.js";
+
+const content = page(
+    html(
+        createHead({ title: "My Page" }),
+        body(
+            div({ id: "app" },
+                h1("Hello World")
+            )
+        )
+    )
+);
+
+await generate("index.html", content);
+```
+
+### Build
+
+```bash
 bun run fhtml.js
 ```
 
-This watches all `.js` files and compiles them to HTML on change.
+This watches all `.js` files and compiles them to HTML on change. Output goes to `dist/`.
+
+### Using Imports
+
+Put your static assets (CSS, JS, images) in an `imports/` folder:
+
+```
+imports/
+  styles.css
+  app.js
+  logo.png
+```
+
+Reference them in `createHead`:
+
+```javascript
+createHead({
+    imports: ["styles.css", "app.js"]
+})
+```
+
+They'll automatically be copied to `dist/imports/` on build.
 
 ## Usage
 
