@@ -1,5 +1,5 @@
 // html.js — Functional HTML builder + static file generator for Bun
-import { mkdir, writeFile, cp, access } from "node:fs/promises";
+import { mkdir, writeFile, cp, rm, access } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { html_beautify } from "js-beautify";
 export { chart } from "./utils/chart.js";
@@ -214,7 +214,7 @@ function createHead(config, ...manualChildren) {
         if (cp.endsWith(".css")) {
             children.push(tags.link({ rel: "stylesheet", href: "./imports/" + p }));
         } else if (cp.includes(".js")) {
-            children.push(script({ src: "./imports/" + p.replaceAll("defer", ""), defer: p.includes("defer") }));
+            children.push(script({ src: "../imports/" + p.replaceAll("defer", ""), defer: p.includes("defer") }));
         }
     }
 
@@ -256,15 +256,23 @@ async function copyImports() {
     console.log("  ✓ dist/imports/");
 }
 
-async function generate(filename, content) {
-    // Copy imports/ on first call, once per build
+let distCleaned = false;
+
+async function generate(folder, content) {
+    if (!distCleaned) {
+        distCleaned = true;
+        await rm("dist", { recursive: true, force: true });
+    }
+
     if (!importsCopied) {
         importsCopied = true;
         await copyImports();
     }
 
-    const outPath = join("dist", filename);
-    await mkdir(dirname(outPath), { recursive: true });
+    const dirPath = join("dist", folder);
+    const outPath = join(dirPath, "index.html");
+
+    await mkdir(dirPath, { recursive: true });
 
     const pretty = html_beautify(content, {
         indent_size: 2,
@@ -275,7 +283,7 @@ async function generate(filename, content) {
     });
 
     await Bun.write(outPath, pretty);
-    console.log(`  ✓ dist/${filename}`);
+    console.log(`  ✓ dist/${folder}/index.html`);
 }
 
 // ─── Exports ──────────────────────────────────────────────────────────────────

@@ -20,7 +20,7 @@ const characterTemplate = div(
         strong("{{name}}"),
         p("Status: {{status}}"),
         p("Species: {{species}}"),
-        p("Origin: {{origin}}"),
+        p("Origin: {{origin.name}}"),
     )
 );
 
@@ -72,4 +72,4 @@ const pageContent = page(
     )
 );
 
-await generate("index.html", pageContent);
+await generate("home", pageContent);
