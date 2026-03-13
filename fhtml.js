@@ -111,23 +111,17 @@ const tags = Object.fromEntries(
 // All script() calls accumulate here; page() flushes them into a single <script>
 let _scripts = [];
 
-function extractBody(fn) {
-    const src = fn.toString();
-    const body = src.slice(src.indexOf('{') + 1, src.lastIndexOf('}'));
-    return body.replace(/^\n|\n\s*$/g, '').replace(/^    /gm, '');
-}
-
 /**
  * Accumulates inline JS to be flushed as a single <script> at the end of page().
  * External scripts (src) are returned immediately as a RawHtml tag.
  *
  *   script({ src: "/app.js", defer: true })   → immediate <script src> tag
- *   script({ data: obj }, () => { ... })       → accumulated, data injected first
- *   script(() => { ... })                      → accumulated
+ *   script({ data: obj }, "console.log(1)")   → accumulated, data injected first
+ *   script("console.log(1)")                  → accumulated
  */
-function script(propsOrFn, ...rest) {
-    const props = isProps(propsOrFn) ? propsOrFn : {};
-    const children = isProps(propsOrFn) ? rest : [propsOrFn, ...rest];
+function script(propsOrStr, ...rest) {
+    const props = isProps(propsOrStr) ? propsOrStr : {};
+    const children = isProps(propsOrStr) ? rest : [propsOrStr, ...rest];
 
     const { data, as: varName = "__data__", ...attrs } = props;
 
@@ -142,7 +136,6 @@ function script(propsOrFn, ...rest) {
     }
 
     chunk += children.flat(Infinity).map((c) => {
-        if (typeof c === "function") return extractBody(c);
         if (c instanceof RawHtml) return c.html;
         return String(c ?? "");
     }).join("");
@@ -163,7 +156,6 @@ let _styles = [];
  *   style({ href: "/app.css" })               → immediate <link rel="stylesheet"> tag
  *   style({ media: "print" }, `body { ... }`) → accumulated with media attr preserved
  *   style(`body { margin: 0; }`)              → accumulated
- *   style(() => { ... })                      → accumulated, function body extracted
  */
 function style(propsOrCss, ...rest) {
     const props = isProps(propsOrCss) ? propsOrCss : {};
@@ -177,7 +169,6 @@ function style(propsOrCss, ...rest) {
     }
 
     const chunk = children.flat(Infinity).map((c) => {
-        if (typeof c === "function") return extractBody(c);
         if (c instanceof RawHtml) return c.html;
         return String(c ?? "");
     }).join("");

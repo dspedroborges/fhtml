@@ -50,7 +50,7 @@ createHead({
 ```javascript
 import {
     html, body, div, h1, form, input, button, span, strong, p, img,
-    script, createHead, page, generate,
+    script, style, createHead, page, generate,
 } from "./fhtml.js";
 // Build HTML with function calls
 const myPage = div(
@@ -73,6 +73,37 @@ const fullPage = page(
 // Generate static HTML file
 await generate("index.html", fullPage);
 ```
+## Inline Styles
+Use the `style` tag to write inline CSS anywhere in your component tree. All calls are collected and flushed as `<style>` tags just before `</head>` when `page()` is called.
+
+```javascript
+// Plain CSS string — most common
+style(`
+    body { margin: 0; font-family: sans-serif; }
+    h1 { color: red; }
+`);
+
+// With a media attribute — gets its own <style media="..."> block
+style({ media: "print" }, `
+    body { font-size: 12pt; }
+`);
+
+// External stylesheet — emits a <link> immediately, nothing accumulated
+style({ href: "/app.css" });
+style({ href: "/print.css", media: "print" });
+```
+
+Like `script`, `style` can be called **anywhere** in your component tree — co-locate styles with the components they belong to:
+
+```javascript
+const Card = (title) => {
+    style(`.card { padding: 1rem; border: 1px solid #eee; border-radius: 8px; }`);
+    return div({ class: "card" }, h1(title));
+};
+```
+
+No matter how deep the call, all styles land in `<style>` blocks in `<head>`.
+
 ## Passing Data from Server to Client
 Use the `script` tag with a `data` property to inject server-side data into the client. The data is serialized as JSON and assigned to `window.__data__` before your inline code runs.
 
@@ -84,9 +115,7 @@ const UserCard = (user) => div({ class: "card" },
     h1(user.name),
     script({
         data: { user },
-    }, () => {
-        console.log(window.__data__.user.name);
-    })
+    }, `console.log(window.__data__.user.name)`)
 );
 
 // Or at the top level
@@ -95,16 +124,16 @@ script({
         user: { name: "Alice", email: "alice@example.com" },
         config: { apiUrl: "/api" }
     },
-}, () => {
+}, `
     // window.__data__ is available here
     console.log(window.__data__.user.name); // "Alice"
-});
+`);
 ```
 You can customize the variable name with the `as` option:
 ```javascript
-script({ data: { ... }, as: "APP_DATA" }, () => {
-    console.log(APP_DATA.user.name);
-});
+script({ data: { ... }, as: "APP_DATA" }, `
+    console.log(window.APP_DATA.user.name);
+`);
 ```
 ## Charts
 Import and use the built-in chart helper to generate SVG charts:
