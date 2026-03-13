@@ -1,8 +1,8 @@
 import {
-    html, body, div, h1, form, input, button, span, strong, p, img,
+    html, body, div, h1, form, input, button, span, strong, p, img, nav,
     script, createHead, page, generate, raw,
-} from "./fhtml.js";
-import { chart } from "./fhtml.js";
+} from "./app_dist/app.js";
+import { chart } from "./app_dist/app.js";
 
 const barSvg = chart.bar({
     labels: ["Q1", "Q2", "Q3", "Q4"],
@@ -34,11 +34,15 @@ script({
     action("#search-form", {
         ...__data__.searchConfig,
         onSuccess: (data) => console.log("Results:", data),
-        onError:   (err)  => console.error("Error:", err),
+        onError: (err) => console.error("Error:", err),
     });
     console.log("Hello");
     console.log(document.querySelector("body"));
 });
+
+const navbar = () => {
+    return nav("Hello");
+}
 
 const pageContent = page(
     html(
@@ -49,6 +53,7 @@ const pageContent = page(
         }),
         body(
             div(raw(barSvg)),
+            navbar(),
             h1("Rick and Morty Characters"),
             div({ id: "character-list" }),
             span({ id: "loader", style: "display:none" }, "Loading..."),
