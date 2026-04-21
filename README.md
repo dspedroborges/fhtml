@@ -1,183 +1,314 @@
-# Functional HTML (fhtml)
-A tiny library that lets you write HTML using JavaScript function calls. No JSX, no build step beyond running a script with Bun, just functional composition. Built because sometimes you want the composability of React without the framework - zero dependencies, just strings.
-## Getting Started
-### Install
-```bash
-# Install Bun if you haven't
-curl -fsSL https://bun.sh/install | bash
-# Clone the repo
-git clone https://github.com/dspedroborges/fhtml
-cd fhtml
-# Install dependencies
-bun install
+# fhtml
+
+Functional HTML builder and static site generator for [Bun](https://bun.sh). Write your pages as plain TypeScript — no templates, no JSX, no build plugins. Just functions that return strings.
+
+```ts
+import { html, body, h1, p, page, generate, createHead } from "./fhtml.ts";
+
+await generate("index.html", page(
+  html(
+    createHead({ title: "Hello" }),
+    body(
+      h1("Hello, world!"),
+      p("Built with fhtml."),
+    ),
+  ),
+));
 ```
-### Create a Page
-Create your source file in the project root (e.g., `index.js`):
-```javascript
-import { html, body, div, h1, createHead, page, generate } from "./fhtml.js";
-const content = page(
-    html(
-        createHead({ title: "My Page" }),
-        body(
-            div({ id: "app" },
-                h1("Hello World")
-            )
-        )
-    )
-);
-await generate("index.html", content);
+
+Output: `dist/index.html`.
+
+---
+
+## Installation
+
+No npm package yet — just copy `fhtml.ts` into your project and import from it directly. Requires Bun.
+
+---
+
+## Core concepts
+
+### Tags
+
+Every HTML element is exported as a function. The optional first argument is a props object; the rest are children.
+
+```ts
+div({ class: "card", id: "main" }, "Hello")
+// → <div class="card" id="main">Hello</div>
+
+img({ src: "/logo.png", alt: "Logo" })
+// → <img src="/logo.png" alt="Logo" />
+
+a({ href: "https://example.com" }, "Visit us")
+// → <a href="https://example.com">Visit us</a>
 ```
-### Build
-```bash
-bun run index.js
+
+Boolean props work naturally:
+
+```ts
+input({ type: "checkbox", checked: true, disabled: false })
+// → <input type="checkbox" checked />
 ```
-This runs your source file and generates HTML to `dist/`. Run it again whenever you make changes.
-### Using Imports
-Put your static assets (CSS, JS, images) in an `imports/` folder:
+
+### `page(node)`
+
+Wraps a root node with `<!DOCTYPE html>` and flushes any accumulated `style()` and `script()` calls.
+
+### `generate(filename, content)`
+
+Writes content to `dist/<filename>`, creating directories as needed. On the first call it wipes `dist/` clean and copies the root-level `imports/` folder into `dist/imports/` if it exists.
+
+```ts
+await generate("index.html", page(html(...)));
+await generate("about/index.html", page(html(...)));
 ```
-imports/
-  styles.css
-  app.js
-  logo.png
-```
-Reference them in `createHead`:
-```javascript
+
+### `createHead(config, ...children)`
+
+Smart `<head>` builder. Handles titles, meta tags, Open Graph, canonical URLs, favicons, and asset imports.
+
+```ts
 createHead({
-    imports: ["./imports/styles.css", "./imports/app.js"]
+  title: "My Site",
+  description: "A short description.",
+  url: "https://example.com",
+  icon: "/favicon.ico",
+  thumbnail: "/og.png",
+  author: "Jane Doe",
+  imports: ["/style.css", "/app.defer.js"],
 })
 ```
-## Usage
-```javascript
-import {
-    html, body, div, h1, form, input, button, span, strong, p, img,
-    script, style, createHead, page, generate,
-} from "./fhtml.js";
-// Build HTML with function calls
-const myPage = div(
-    h1("Hello World"),
-    button({ class: "btn" }, "Click me")
-);
-// Create a full page with head metadata
-const fullPage = page(
-    html(
-        createHead({
-            title: "My Page",
-            description: "A cool page",
-            imports: ["./imports/styles.css", "./imports/app.js"]
-        }),
-        body(
-            div({ id: "app" }, myPage)
-        )
-    )
-);
-// Generate static HTML file
-await generate("index.html", fullPage);
-```
-## Inline Styles
-Use the `style` tag to write inline CSS anywhere in your component tree. All calls are collected and flushed as `<style>` tags just before `</head>` when `page()` is called.
 
-```javascript
-// Plain CSS string — most common
+Any key not listed above becomes a `<meta name="..." content="...">` tag.
+
+### `style(css)` and `script(js)`
+
+Accumulate inline CSS and JS. `page()` flushes them into a single `<style>` in `<head>` and a single `<script>` before `</body>`.
+
+```ts
 style(`
-    body { margin: 0; font-family: sans-serif; }
-    h1 { color: red; }
+  body { margin: 0; font-family: sans-serif; }
+  h1 { color: #111; }
 `);
 
-// With a media attribute — gets its own <style media="..."> block
-style({ media: "print" }, `
-    body { font-size: 12pt; }
+script(`
+  document.querySelector("h1").addEventListener("click", () => alert("hi"));
 `);
-
-// External stylesheet — emits a <link> immediately, nothing accumulated
-style({ href: "/app.css" });
-style({ href: "/print.css", media: "print" });
 ```
 
-Like `script`, `style` can be called **anywhere** in your component tree — co-locate styles with the components they belong to:
+External assets are emitted immediately as tags instead of accumulated:
 
-```javascript
-const Card = (title) => {
-    style(`.card { padding: 1rem; border: 1px solid #eee; border-radius: 8px; }`);
-    return div({ class: "card" }, h1(title));
-};
+```ts
+style({ href: "/app.css" })
+// → <link rel="stylesheet" href="/app.css" />
+
+script({ src: "/app.js", defer: true })
+// → <script src="/app.js" defer></script>
 ```
 
-No matter how deep the call, all styles land in `<style>` blocks in `<head>`.
+You can also pass inline data to a script, injected as a `window` variable:
 
-## Passing Data from Server to Client
-Use the `script` tag with a `data` property to inject server-side data into the client. The data is serialized as JSON and assigned to `window.__data__` before your inline code runs.
+```ts
+script({ data: { items: [1, 2, 3] }, as: "appData" }, `
+  console.log(window.appData.items);
+`);
+```
 
-The `script` tag can be placed **anywhere** in your page — not just in the `<head>`. You can embed it directly inside components, making it easy to co-locate inline scripts with the markup they relate to:
+### Responsive helpers
 
-```javascript
-// Inside a component
-const UserCard = (user) => div({ class: "card" },
-    h1(user.name),
-    script({
-        data: { user },
-    }, `console.log(window.__data__.user.name)`)
-);
+`sm`, `md`, `lg`, `xl` wrap CSS in the corresponding `@media (min-width: ...)` query:
 
-// Or at the top level
-script({
-    data: {
-        user: { name: "Alice", email: "alice@example.com" },
-        config: { apiUrl: "/api" }
+```ts
+style(`p { font-size: 14px; }`);
+md(`p { font-size: 16px; }`);
+xl(`p { font-size: 18px; }`);
+```
+
+### `raw(str)`
+
+Inject raw HTML without escaping — use when you know the string is already safe:
+
+```ts
+raw(`<svg>...</svg>`)
+```
+
+---
+
+## SEO helpers
+
+### `generateRobots(config)`
+
+Writes `dist/robots.txt`.
+
+```ts
+await generateRobots({
+  rules: [
+    { userAgent: "*", allow: "/", disallow: ["/admin", "/private"] },
+    { userAgent: "GPTBot", disallow: "/" },
+  ],
+  sitemap: "https://example.com/sitemap.xml",
+});
+```
+
+### `generateSitemap(entries)`
+
+Writes `dist/sitemap.xml` following the [sitemaps.org](https://www.sitemaps.org) schema.
+
+```ts
+await generateSitemap([
+  { url: "https://example.com/",       changefreq: "weekly",  priority: 1.0 },
+  { url: "https://example.com/about",  changefreq: "monthly", priority: 0.8 },
+  { url: "https://example.com/blog",   changefreq: "daily",   priority: 0.6 },
+]);
+```
+
+### `generateLlms(config)`
+
+Writes `dist/llms.txt` following the [llmstxt.org](https://llmstxt.org) spec — a structured Markdown file that helps LLMs understand your site.
+
+```ts
+await generateLlms({
+  name: "My Site",
+  description: "A toolkit for building static sites with Bun.",
+  url: "https://example.com",
+  sections: [
+    {
+      title: "Docs",
+      links: [
+        { label: "Getting Started", url: "https://example.com/docs/start", description: "Installation and first steps" },
+        { label: "API Reference",   url: "https://example.com/docs/api" },
+      ],
     },
-}, `
-    // window.__data__ is available here
-    console.log(window.__data__.user.name); // "Alice"
-`);
-```
-You can customize the variable name with the `as` option:
-```javascript
-script({ data: { ... }, as: "APP_DATA" }, `
-    console.log(window.APP_DATA.user.name);
-`);
-```
-## Charts
-Import and use the built-in chart helper to generate SVG charts:
-```javascript
-import { chart, raw } from "./fhtml.js";
-// Bar chart
-const barSvg = chart.bar({
-    labels: ["Q1", "Q2", "Q3", "Q4"],
-    data: [100, 200, 150, 300],
-    colors: { bar: "steelblue", background: "#fafafa" }
-});
-// Use in your HTML
-div(raw(barSvg))
-// Line chart
-chart.line({
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-    data: [10, 25, 18, 30, 45],
-    colors: { lines: ["tomato", "seagreen"] }
-});
-// Pie chart
-chart.pie({
-    labels: ["Dogs", "Cats", "Birds"],
-    data: [40, 35, 25]
+  ],
+  notes: "Prefer linking to /docs/api for technical questions.",
 });
 ```
-Available chart types: `bar`, `line`, `pie`. All return standalone SVG strings - wrap them with `raw()` when embedding.
-## createHead Options
-```javascript
-createHead({
-    title: "Page Title",           // <title> + og:title
-    description: "Page description", // meta description + og:description
-    author: "John Doe",
-    thumbnail: "https://example.com/image.png", // og:image + twitter:card
-    url: "https://example.com/page", // og:url + canonical link
-    icon: "/favicon.svg",
-    imports: ["styles.css", "app.js"] // .css → <link>, .js → <script defer>
-})
+
+### `generateSeo(config)`
+
+Convenience wrapper — runs all three in parallel. Pass whichever keys you need.
+
+```ts
+await generateSeo({
+  robots:  { rules: [{ userAgent: "*", allow: "/" }], sitemap: "https://example.com/sitemap.xml" },
+  sitemap: [{ url: "https://example.com/", priority: 1.0 }],
+  llms:    { name: "My Site", description: "...", url: "https://example.com", sections: [] },
+});
 ```
-## Project Structure
+
+---
+
+## Full example
+
+A complete two-page site with shared styles, a nav, and SEO files:
+
+```ts
+import {
+  html, body, header, main, footer, nav, h1, h2, p, a, ul, li, span,
+  page, generate, createHead, style, script, generateSeo,
+} from "./fhtml.ts";
+
+const BASE = "https://example.com";
+
+function layout(title: string, content: unknown) {
+  style(`
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; color: #111; }
+    header { padding: 1rem 2rem; border-bottom: 1px solid #eee; display: flex; gap: 2rem; align-items: center; }
+    main { padding: 2rem; max-width: 720px; margin: 0 auto; }
+    footer { padding: 1rem 2rem; font-size: 0.85rem; color: #888; border-top: 1px solid #eee; }
+  `);
+
+  return page(
+    html(
+      createHead({ title, url: BASE, icon: "/favicon.ico" }),
+      body(
+        header(
+          span({ style: "font-weight: bold" }, "MySite"),
+          nav(
+            a({ href: "/" }, "Home"),
+            " · ",
+            a({ href: "/about/" }, "About"),
+          ),
+        ),
+        main(content),
+        footer("© 2025 MySite"),
+      ),
+    ),
+  );
+}
+
+await generate("index.html", layout("Home", [
+  h1("Welcome"),
+  p("This site is built with fhtml — functional HTML for Bun."),
+]));
+
+await generate("about/index.html", layout("About", [
+  h1("About"),
+  p("fhtml is a zero-dependency HTML builder and static site generator."),
+]));
+
+await generateSeo({
+  robots: {
+    rules: [{ userAgent: "*", allow: "/" }],
+    sitemap: `${BASE}/sitemap.xml`,
+  },
+  sitemap: [
+    { url: `${BASE}/`,       changefreq: "weekly",  priority: 1.0 },
+    { url: `${BASE}/about/`, changefreq: "monthly", priority: 0.8 },
+  ],
+  llms: {
+    name: "MySite",
+    description: "A demo site built with fhtml, a functional HTML builder for Bun.",
+    url: BASE,
+    sections: [
+      {
+        title: "Pages",
+        links: [
+          { label: "Home",  url: `${BASE}/` },
+          { label: "About", url: `${BASE}/about/` },
+        ],
+      },
+    ],
+  },
+});
 ```
-fhtml.js              # Build script (runs with Bun)
-*.js                  # Your source files
-dist/                 # Compiled output
-imports/              # Static assets (copied to dist/imports/)
+
+Run it:
+
+```sh
+bun run build.ts
 ```
-## License
-MIT
+
+Output:
+
+```
+dist/
+├── imports/         # copied from root imports/ if present
+├── index.html
+├── about/
+│   └── index.html
+├── robots.txt
+├── sitemap.xml
+└── llms.txt
+```
+
+---
+
+## API reference
+
+| Export | Description |
+|---|---|
+| `tag(name, ...args)` | Low-level tag factory |
+| `raw(str)` | Inject unescaped HTML |
+| `render(node)` | Render any `Child` to a string |
+| `page(node)` | Wrap with DOCTYPE, flush styles + scripts |
+| `generate(file, content)` | Write to `dist/` |
+| `createHead(config)` | Build a `<head>` with meta/OG/imports |
+| `style(css)` | Accumulate inline CSS (or emit `<link>`) |
+| `script(js)` | Accumulate inline JS (or emit `<script src>`) |
+| `sm/md/lg/xl(css)` | Responsive `@media` wrappers |
+| `generateRobots(config)` | Write `dist/robots.txt` |
+| `generateSitemap(entries)` | Write `dist/sitemap.xml` |
+| `generateLlms(config)` | Write `dist/llms.txt` |
+| `generateSeo(config)` | Write all three SEO files in parallel |
